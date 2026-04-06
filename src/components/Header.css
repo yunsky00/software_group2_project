@@ -1,0 +1,64 @@
+/* Header.css: 상단 네비게이션 스타일 */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 24px;
+  height: 60px;
+  background: white;
+  border-bottom: 1px solid #e5e7eb;
+  position: fixed; /* 상단 고정 */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000; /* 다른 요소 위에 표시 */
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.logo-icon:hover {
+  opacity: 0.9;
+}
+
+.logo-text {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.nav {
+  display: flex;
+  gap: 20px;
+}
+
+.nav-item {
+  cursor: pointer;
+  color: #6b7280;
+  transition: color 0.2s; /* 부드러운 색상 전환 */
+}
+
+.nav-item.active {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.nav-item:hover {
+  color: #2563eb; /* 호버 시 색상 변경 */
+}
