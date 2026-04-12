@@ -1,61 +1,106 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { rankingData } from '../data/ranking';
 import './Ranking.css';
 
-function Ranking() {
-  // 뷰 유형을 상태로 관리합니다. 실제 필터는 UI 중심으로 동작합니다.
-  const [viewType, setViewType] = useState('일간');
+const CATEGORY_LABELS = {
+  corporate: '민간자격',
+  public: '국가전문자격',
+  government: '국가기술자격',
+};
 
-  // 상단 요약카드에 사용할 더미 데이터
+function Ranking() {
+  const navigate = useNavigate();
+  const [viewType, setViewType] = useState('주간');
+
   const summaryCards = [
-    { title: '최다 검색 자격증', value: '정보처리기사' },
-    { title: '최대 상승 자격증', value: '정보보안기사' },
-    { title: '총 검색수', value: '29,845' },
+    {
+      title: '최다 검색',
+      value: '정보처리기사',
+      description: 'TOP 검색 자격증',
+      variant: 'orange',
+    },
+    {
+      title: '최대 상승',
+      value: 'SQLD (SQL 개발자)',
+      description: '검색량 상승폭',
+      variant: 'blue',
+    },
+    {
+      title: '총 검색수',
+      value: '90,840',
+      description: '이번 주 전체 검색',
+      variant: 'purple',
+    },
   ];
 
   return (
     <div className="ranking-page">
-      {/* 페이지 제목과 간단한 설명 */}
+      <button type="button" className="back-button" onClick={() => navigate(-1)}>
+        ← 돌아가기
+      </button>
+
       <header className="ranking-header">
-        <h1 className="ranking-title">검색 순위 랭킹</h1>
-        <p className="ranking-subtitle">최근 검색 트렌드를 한눈에 확인하세요.</p>
+        <div className="ranking-icon">📈</div>
+        <div>
+          <h1 className="ranking-title">검색 순위 랭킹</h1>
+          <p className="ranking-subtitle">가장 많이 검색된 인기 자격증 TOP 100을 확인하세요</p>
+        </div>
       </header>
 
-      {/* 일간/주간/월간 필터 버튼 */}
-      <div className="ranking-filters">
-        {['일간', '주간', '월간'].map((type) => (
-          <button
-            key={type}
-            type="button"
-            className={`filter-button ${viewType === type ? 'active' : ''}`}
-            onClick={() => setViewType(type)}
-          >
-            {type}
-          </button>
-        ))}
+      <div className="ranking-controls">
+        <div className="ranking-tabs">
+          {['일간', '주간', '월간'].map((type) => (
+            <button
+              key={type}
+              type="button"
+              className={`tab-button ${viewType === type ? 'active' : ''}`}
+              onClick={() => setViewType(type)}
+            >
+              {type}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* 요약 카드 */}
       <section className="summary-grid">
         {summaryCards.map((card) => (
-          <article key={card.title} className="summary-card">
-            <p className="summary-card-title">{card.title}</p>
-            <p className="summary-card-value">{card.value}</p>
+          <article key={card.title} className={`summary-card summary-card-${card.variant}`}>
+            <p className="summary-card-tag">{card.title}</p>
+            <h2 className="summary-card-value">{card.value}</h2>
+            <p className="summary-card-note">{card.description}</p>
           </article>
         ))}
       </section>
 
-      {/* 랭킹 리스트 */}
-      <section className="ranking-list">
+      <section className="ranking-table">
+        <div className="table-header">
+          <span>순위</span>
+          <span>변동</span>
+          <span>자격증명</span>
+          <span>카테고리</span>
+          <span>검색수</span>
+          <span />
+        </div>
         {rankingData.map((item) => (
-          <article key={item.rank} className="ranking-item">
-            <div className="ranking-item-rank">{item.rank}</div>
-            <div className="ranking-item-name">{item.name}</div>
-            <div className="ranking-item-category">{item.category}</div>
-            <div className="ranking-item-searches">{item.searches.toLocaleString()}회</div>
-          </article>
+          <div
+            key={item.rank}
+            className="table-row clickable-row"
+            onClick={() => navigate(`/certificate/${encodeURIComponent(item.name)}`)}
+          >
+            <div className="row-rank">{item.rank}</div>
+            <div className={`row-trend ${item.trend === 'up' ? 'trend-up' : item.trend === 'down' ? 'trend-down' : ''}`}>
+              {item.trend === 'up' ? `↑ ${item.change}` : item.trend === 'down' ? `↓ ${item.change}` : '—'}
+            </div>
+            <div className="row-name">{item.name}</div>
+            <div className="row-category">{CATEGORY_LABELS[item.category] || item.category}</div>
+            <div className="row-searches">{item.searches.toLocaleString()}</div>
+            <div className="row-action">→</div>
+          </div>
         ))}
       </section>
+
+      <div className="view-more">더 보기 (100위까지)</div>
     </div>
   );
 }

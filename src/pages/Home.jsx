@@ -8,21 +8,21 @@ function Home() {
     {
       icon: '🏢',
       title: '대기업',
-      description: '삼성, LG, 현대 등 핵심 기업 취업 정보',
+      description: '삼성, LG, 현대 등 주요 기업 취업에 맞춘 자격 정보',
       path: '/category/corporate',
       accent: '#dbeafe',
     },
     {
       icon: '🏛️',
       title: '공기업',
-      description: '한전, 도로공사 등 공기업 준비 로드맵',
+      description: '공사, 공단, 공공기관 준비를 위한 로드맵',
       path: '/category/public',
       accent: '#dcfce7',
     },
     {
-      icon: '👮',
+      icon: '🧑‍💼',
       title: '공무원',
-      description: '행정직과 기술직 맞춤 시험 정보',
+      description: '행정직과 기술직에 맞는 시험 및 자격 정보',
       path: '/category/government',
       accent: '#ede9fe',
     },
@@ -37,7 +37,7 @@ function Home() {
       accent: '#fef9c3',
     },
     {
-      icon: '🎯',
+      icon: '✨',
       title: '직무 맞춤 추천',
       description: 'AI 기반 개인 맞춤형 자격증 추천',
       path: '/recommendation',
@@ -46,7 +46,7 @@ function Home() {
     {
       icon: '🗓️',
       title: 'D-day 시험일정 캘린더',
-      description: '다가오는 시험 일정과 접수 마감을 관리',
+      description: '다가오는 시험 일정과 접수 마감일 관리',
       path: '/schedule',
       accent: '#fee2e2',
     },
@@ -55,20 +55,43 @@ function Home() {
   return (
     <div className="home-container">
       <section className="home-hero">
-        <div className="home-badge">스펙모아</div>
-        <h1 className="home-title">당신의 커리어를 위한 맞춤형 자격증 추천</h1>
+        <div className="home-badge">
+          <span>스펙모아</span>
+        </div>
+        <h1 className="home-title">취업과 커리어를 위한 맞춤형 자격증 추천</h1>
         <p className="home-subtitle">
-          복잡한 자격증 정보를 한눈에, 구직자의 내일을 잇는 직무 맞춤형 커리어 네비게이터
+          복잡한 자격증 정보를 한눈에 보고, 구직자의 목표에 어울리는 직무 맞춤형 커리어 가이드를 제공합니다.
         </p>
       </section>
 
       <section className="search-section">
         <div className="search-box">
-          <span className="search-icon">🔍</span>
+          <span className="search-icon" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="search-icon-svg"
+            >
+              <circle
+                cx="11"
+                cy="11"
+                r="6.5"
+                stroke="currentColor"
+                strokeWidth="2.2"
+              />
+              <path
+                d="M16 16L20 20"
+                stroke="currentColor"
+                strokeWidth="2.2"
+                strokeLinecap="round"
+              />
+            </svg>
+          </span>
           <input
             type="text"
             className="search-input"
-            placeholder="자격증 이름, 직무, 키워드로 검색하세요..."
+            placeholder="자격증 이름, 직무, 키워드로 검색해보세요..."
             aria-label="자격증 검색"
           />
         </div>

@@ -1,8 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { scheduleData } from '../data/schedule';
 import './Schedule.css';
 
 function Schedule() {
+  const navigate = useNavigate();
   // 상태 필터를 관리합니다.
   const [filter, setFilter] = useState('전체');
 
@@ -53,6 +55,10 @@ function Schedule() {
 
   return (
     <div className="schedule-page">
+      <button type="button" className="back-button" onClick={() => navigate(-1)}>
+        ← 돌아가기
+      </button>
+      
       <header className="schedule-header">
         <div>
           <h1 className="schedule-title">D-day 시험일정 캘린더</h1>

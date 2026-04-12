@@ -4,6 +4,16 @@
   padding: 120px 20px 60px;
 }
 
+.back-button {
+  background: transparent;
+  border: none;
+  color: #2563eb;
+  font-size: 0.95rem;
+  cursor: pointer;
+  padding: 6px 10px;
+  margin-bottom: 20px;
+}
+
 .schedule-header {
   display: flex;
   flex-direction: column;
