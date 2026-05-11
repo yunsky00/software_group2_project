@@ -1,51 +1,51 @@
-Project: 스펙모아
-=================
-2026.03.22.   
-202313393 김다빈   
-202322041 김다인   
-202311681 윤하늘     
+# SpecMoa (Certificate Recommendation API)
 
-## 1. Vision statement   
-   “복잡한 자격증 정보를 한눈에, 구직자의 내일을 잇는 직무 맞춤형 커리어 네비게이터.”   
-   - 핵심 가치: 정보의 효율성, 직무 연관성, 커리어 로드맵 제시
+## Install dependencies
+```bash
+ pip install -r requirements.txt
+```
 
-## 2. Project Goals & Scope   
-   ### ▶ 프로젝트 목표
-   - 사용자 편의: 흩어져 있는 국가 공인 및 민간 자격증 정보를 한곳에 통합하여 검색 시간 단축.
-   - 데이터 정확도: Open API 연동을 통한 최신 시험 일정, 시험 시간, 응시료, 합격률, 주관 기간, 취득 혜택 정보 제공. 
-   - 맞춤형 추천: 사용자 전공 및 희망 직무 데이터를 기반으로 한 AI 우선순위 자격증 추천 기능 구현.
-   
-   ### ▶ 프로젝트 범위
-   - 국내 주요 기업군(대기업/공기업/공무원) 및 직무별 자격증 정보 최적화.
-   - 자격증 명칭, 직무, 관련 키워드 기반의 즉각적인 정보 검색 기능 제공.
-   - 대기업, 공기업, 공무원 3가지를 1차 분류한 후, 희망 직무를 분류하여 자격증 정보를 검색하는 기능 제공.
-   - 자격증별 상세 정보(시험 일정, 시험 시간, 응시료 등) DB 구축.
-   - Open API를 이용하여 AI가 사용자에 적절한 자격증 우선순위를 컨설팅.
-   - 회원 팁 공유 커뮤니티 구현.
-   - 자격증 검색 랭킹 제공.
-   - D-day 캘린더를 제공하여 접수 마감이 임박한 자격증 리스트 제공.
-   
-   ### ▶ 제외 사항
-   - 실제 시험 접수 대행 서비스.
-  
-## 3. Stakeholders & Users
-   ### ▶ Stakeholders   
-   - Main Frontend (김다빈): 전체 시스템 아키텍처 설계, 핵심 검색 엔진및 백엔드 연동 총괄.
-   - Sub Frontend (김다인): 직군별 필터링 UI 및 상세 페이지 구현, UX 디자인 및 스타일 시스템 관리를 통해 시각적 통일성 제공.
-   - Backend (윤하늘): 자격증 메타데이터 DB 구축, 직군/조건별 필터링 API 설계 및 최적화. AI 컨설팅을 위한 데이터 모델링과 로직 구현.
-   - 데이터 제공 파트너: 자격증 정보 API 제공처.
 
-   ### ▶ Users   
-   - 취업 준비생: 본인 직무에 필요한 자격증 파악.
-   - 이직 희망 직장인: 커리어 전환을 위해 필요한 새로운 자격증 정보 탐색.
-   - 대학생: 취득 가능한 효율적인 자격증 우선순위 컨설팅 필요.   
-     
-## 4. Milestones
-   - 기획 및 분석(1~2주): 주제 확정, 요구사항 정의서 작성.
-   - 설계 (3~4주): UI/UX 와이어프레임(Figma), DB 스키마, API 명세서 작성.
-   - 초기 개발 (5-6주): [FE] 프로젝트 보일러플레이트 세팅, 기초 UI 레이아웃 구현. [BE] 개발 환경 구축, 자격증 공공 API 연동 및 DB 구축.
-   - 핵심 개발_1 (7-9주): [FE] 메인 검색 엔진 및 결과 리스트 구현, 직군별 카테고리 분류 및 상세 페이지 UI 구현. [BE] 검색 및 필터링 핵심 쿼리 로직 개발.
-   - 핵심 개발_2 (10주): 프론트엔드-백엔드 데이터 연동.
-   - 연동 (11주): 전체 기능 통합 및 예외 처리 (검색 결과 없음 처리 등).
-   - 테스트 및 디버깅 (12주): 단위 테스트, 버그 수정, 사용자 피드백 기반 UI/UX 수정.
-   - 최종 정리 (13주): 최종 결과 보고서 작성.
+## Test API
+```bash
+# Run tests with pytest at the root directory of the project
+pytest -v
+```
+
+
+## Using API
+* Execute web server
+```bash
+ uvicorn app.main:app --reload
+```
+* Access API documentation
+  - http://127.0.0.1:8000/redoc
+  - http://127.0.0.1:8000/docs
+* Access APIs
+  - http://127.0.0.1:8000/api/v1/certs?category=공기업&job_group=IT
+  - http://127.0.0.1:8000/api/v1/certs/ranking
+  - http://127.0.0.1:8000/api/v1/calendar/upcoming?days=365
+  - http://127.0.0.1:8000/api/v1/bookmarks
+
+* Access APIs with curl (for POST/Auth)
+```bash
+ curl -X GET "http://127.0.0.1:8000/api/v1/consult/priority?major=컴퓨터공학&job=백엔드&target_company=대기업" \
+      -H "Authorization: Bearer <your_supabase_token>"
+
+ # {
+ #  "status":"SUCCEED",
+ #  "data": {
+ #      "consulting_result": "### 추천 자격증... 1. 정보처리기사..."
+ #  }
+ # }
+```
+
+```bash
+curl -X POST "http://127.0.0.1:8000/api/v1/bookmarks/12" \
+      -H "Authorization: Bearer <your_supabase_token>"
+      
+ # {
+ #  "status":"SUCCEED",
+ #  "message":"즐겨찾기에 추가되었습니다."
+ # }
+```
