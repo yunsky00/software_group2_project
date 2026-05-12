@@ -1,5 +1,5 @@
 **1. DB 환경 설정 (Database Environment)**
-- DBMS: MySQL 8.0
+- DBMS: MySQL 8.0 / DBeaver
 - Port: 3308 (보안 및 포트 충돌 방지를 위한 설정)
 - Character Set: utf8mb4 (이모지 및 다국어 지원)
 
