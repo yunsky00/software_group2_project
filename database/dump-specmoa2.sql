@@ -69,6 +69,73 @@ LOCK TABLES `calendar` WRITE;
 UNLOCK TABLES;
 
 --
+-- Table structure for table `certificate`
+--
+
+DROP TABLE IF EXISTS `certificate`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `certificate` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL,
+  `category` varchar(100) DEFAULT NULL,
+  `job_group` varchar(100) DEFAULT NULL,
+  `closest_exam_date` datetime DEFAULT NULL,
+  `receipt_start_date` datetime DEFAULT NULL,
+  `receipt_end_date` datetime DEFAULT NULL,
+  `fee` int DEFAULT NULL,
+  `pass_rate` float DEFAULT NULL,
+  `exam_time` varchar(100) DEFAULT NULL,
+  `yearly_schedule` text,
+  `subjects` text,
+  `benefits` text,
+  `related_jobs` text,
+  `yearly_applicants` int DEFAULT NULL,
+  `view_count` int DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `certificate`
+--
+
+LOCK TABLES `certificate` WRITE;
+/*!40000 ALTER TABLE `certificate` DISABLE KEYS */;
+/*!40000 ALTER TABLE `certificate` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `comment`
+--
+
+DROP TABLE IF EXISTS `comment`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `comment` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `content` text NOT NULL,
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP,
+  `user_id` int DEFAULT NULL,
+  `cert_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `fk_user` (`user_id`),
+  KEY `fk_cert` (`cert_id`),
+  CONSTRAINT `fk_cert` FOREIGN KEY (`cert_id`) REFERENCES `certificate` (`id`),
+  CONSTRAINT `fk_user` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `comment`
+--
+
+LOCK TABLES `comment` WRITE;
+/*!40000 ALTER TABLE `comment` DISABLE KEYS */;
+/*!40000 ALTER TABLE `comment` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `community`
 --
 
@@ -92,6 +159,33 @@ CREATE TABLE `community` (
 LOCK TABLES `community` WRITE;
 /*!40000 ALTER TABLE `community` DISABLE KEYS */;
 /*!40000 ALTER TABLE `community` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `user`
+--
+
+DROP TABLE IF EXISTS `user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `firebase_uid` varchar(255) NOT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `nickname` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `firebase_uid` (`firebase_uid`),
+  UNIQUE KEY `email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user`
+--
+
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -136,4 +230,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-05-11 13:51:37
+-- Dump completed on 2026-05-11 14:39:30
