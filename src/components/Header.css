@@ -1,6 +1,4 @@
-/* Header.css: 상단 네비게이션 스타일 */
-
-.header {
+﻿.header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -8,11 +6,11 @@
   height: 60px;
   background: white;
   border-bottom: 1px solid #e5e7eb;
-  position: fixed; /* 상단 고정 */
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000; /* 다른 요소 위에 표시 */
+  z-index: 1000;
 }
 
 .logo {
@@ -39,6 +37,13 @@
   color: #111827;
 }
 
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+}
+
 .nav {
   display: flex;
   gap: 20px;
@@ -47,7 +52,7 @@
 .nav-item {
   cursor: pointer;
   color: #6b7280;
-  transition: color 0.2s; /* 부드러운 색상 전환 */
+  transition: color 0.2s;
 }
 
 .nav-item.active {
@@ -56,5 +61,82 @@
 }
 
 .nav-item:hover {
-  color: #2563eb; /* 호버 시 색상 변경 */
+  color: #2563eb;
+}
+
+.profile-circle {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid #99b9bd;
+  background: #d4ece8;
+  color: #0f172a;
+  font-size: 20px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.profile-menu {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  width: 250px;
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  border-radius: 16px;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.15);
+  padding: 10px;
+}
+
+.menu-item {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font-size: 16px;
+  color: #1f2937;
+  padding: 12px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.menu-item:hover {
+  background: #f3f4f6;
+}
+
+.menu-item-arrow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.language-list {
+  padding: 0 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.language-option {
+  border: 0;
+  background: #f8fafc;
+  color: #374151;
+  padding: 10px;
+  border-radius: 8px;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.language-option.selected {
+  background: #dbeafe;
+  color: #1d4ed8;
+  font-weight: 600;
+}
+
+.logout {
+  margin-top: 4px;
+  border-top: 1px solid #e5e7eb;
+  border-radius: 0;
+  padding-top: 14px;
 }

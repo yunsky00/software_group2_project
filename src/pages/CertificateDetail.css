@@ -1,16 +1,17 @@
-.detail-page {
+﻿.detail-page {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 130px 20px 60px;
+  padding: 120px 20px 60px;
 }
 
-.detail-back {
+.detail-page .back-button {
   background: transparent;
   border: none;
   color: #2563eb;
   font-size: 0.95rem;
   cursor: pointer;
   margin-bottom: 24px;
+  padding: 6px 10px;
 }
 
 .detail-card {
@@ -71,10 +72,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 18px;
-  background: #111827;
-  color: #ffffff;
-  font-size: 1.6rem;
 }
 
 .detail-summary {
@@ -334,8 +331,12 @@
   }
 
   .detail-flag {
-    margin-top: 12px;
-  }
+  width: 58px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
   .detail-stats {
     grid-template-columns: 1fr;
@@ -346,3 +347,4 @@
     align-items: stretch;
   }
 }
+

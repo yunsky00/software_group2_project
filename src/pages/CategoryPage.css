@@ -1,4 +1,4 @@
-.category-page {
+﻿.category-page {
   max-width: 1200px;
   margin: 0 auto;
   padding: 120px 20px 40px;
@@ -8,13 +8,14 @@
   margin-bottom: 22px;
 }
 
-.back-button {
+.category-page .back-button {
   background: transparent;
   border: none;
   color: #2563eb;
   font-size: 0.95rem;
   cursor: pointer;
   padding: 6px 10px;
+  margin-bottom: 24px;
 }
 
 .category-header {
@@ -37,9 +38,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 18px;
-  background: rgba(59, 130, 246, 0.12);
-  font-size: 1.4rem;
+  border-radius: 16px;
+}
+
+.category-icon.corporate {
+  background: #d3e4fe;
+}
+
+.category-icon.public {
+  background: #e9e2fe;
+}
+
+.category-icon.government {
+  background: #fce0ee;
+}
+
+.category-icon-emoji {
+  font-size: 1.6rem;
+  line-height: 1;
 }
 
 .category-title {
@@ -137,9 +153,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 12px;
-  background: rgba(37, 99, 235, 0.1);
-  font-size: 1.15rem;
 }
 
 .category-card-meta {

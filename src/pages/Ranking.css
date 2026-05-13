@@ -86,18 +86,22 @@
   padding: 26px;
   min-height: 150px;
   color: #111827;
+  border: 2px solid transparent;
 }
 
 .summary-card-orange {
   background: rgba(251, 146, 60, 0.12);
+  border-color: rgba(251, 146, 60, 0.26);
 }
 
 .summary-card-blue {
   background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(59, 130, 246, 0.24);
 }
 
 .summary-card-purple {
   background: rgba(168, 85, 247, 0.12);
+  border-color: rgba(168, 85, 247, 0.24);
 }
 
 .summary-card-tag {

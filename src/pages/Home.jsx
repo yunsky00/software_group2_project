@@ -8,23 +8,29 @@ function Home() {
     {
       icon: '🏢',
       title: '대기업',
-      description: '삼성, LG, 현대 등 주요 기업 취업에 맞춘 자격 정보',
+      description: '삼성, LG, 현대 등',
       path: '/category/corporate',
-      accent: '#dbeafe',
+      accent: '#d3e4fe',
+      borderColor: '#bdd7fe',
+      hoverAccent: '#c8ddfe',
     },
     {
       icon: '🏛️',
       title: '공기업',
-      description: '공사, 공단, 공공기관 준비를 위한 로드맵',
+      description: '한전, 도로공사 등',
       path: '/category/public',
-      accent: '#dcfce7',
+      accent: '#e9e2fe',
+      borderColor: '#ddd1fe',
+      hoverAccent: '#e1d7fe',
     },
     {
-      icon: '🧑‍💼',
+      icon: '🧑🏻‍💼',
       title: '공무원',
-      description: '행정직과 기술직에 맞는 시험 및 자격 정보',
+      description: '행정직, 기술직 등',
       path: '/category/government',
-      accent: '#ede9fe',
+      accent: '#fce0ee',
+      borderColor: '#f9c9df',
+      hoverAccent: '#fbd5e7',
     },
   ];
 
@@ -37,7 +43,7 @@ function Home() {
       accent: '#fef9c3',
     },
     {
-      icon: '✨',
+      icon: '🎯',
       title: '직무 맞춤 추천',
       description: 'AI 기반 개인 맞춤형 자격증 추천',
       path: '/recommendation',
@@ -104,7 +110,11 @@ function Home() {
           <article
             key={card.path}
             className="home-category-card"
-            style={{ backgroundColor: card.accent }}
+            style={{
+              '--category-bg': card.accent,
+              '--category-border': card.borderColor,
+              '--category-hover-bg': card.hoverAccent,
+            }}
             onClick={() => navigate(card.path)}
             role="button"
             tabIndex={0}

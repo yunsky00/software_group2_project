@@ -1,4 +1,4 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { certifications } from '../data/certifications';
 import './CertificateDetail.css';
@@ -14,13 +14,13 @@ function CertificateDetail() {
       id: 1,
       author: '김하나',
       rating: 5,
-      comment: '문제 난이도는 적당하고 기출 유형이 크게 도움이 되었습니다.',
+      comment: '문제 난이도는 적당했고 기출 유형과 유사해서 도움이 됐습니다.',
     },
     {
       id: 2,
-      author: '이준호',
+      author: '이준',
       rating: 4,
-      comment: '혼자 준비하기보다 스터디와 병행하면 더 좋습니다.',
+      comment: '혼자 준비하기보다 스터디를 병행하면 더 좋습니다.',
     },
   ]);
   const [reviewer, setReviewer] = useState('');
@@ -28,9 +28,7 @@ function CertificateDetail() {
   const [comment, setComment] = useState('');
 
   const handleReviewSubmit = () => {
-    if (!comment.trim()) {
-      return;
-    }
+    if (!comment.trim()) return;
 
     const nextReview = {
       id: Date.now(),
@@ -48,8 +46,8 @@ function CertificateDetail() {
   if (!certificate) {
     return (
       <div className="detail-page">
-        <button type="button" className="detail-back" onClick={() => navigate(-1)}>
-          ← 이전으로
+        <button type="button" className="back-button" onClick={() => navigate(-1)}>
+          ← 돌아가기
         </button>
         <div className="detail-empty">해당 자격증 정보를 찾을 수 없습니다.</div>
       </div>
@@ -58,7 +56,7 @@ function CertificateDetail() {
 
   return (
     <div className="detail-page">
-      <button type="button" className="detail-back" onClick={() => navigate(-1)}>
+      <button type="button" className="back-button" onClick={() => navigate(-1)}>
         ← 돌아가기
       </button>
 
@@ -70,7 +68,6 @@ function CertificateDetail() {
             <span className="detail-level">{certificate.level}</span>
             <p className="detail-source">{certificate.organization}</p>
           </div>
-          <div className="detail-flag">🔖</div>
         </div>
 
         <p className="detail-summary">{certificate.description}</p>
@@ -100,7 +97,7 @@ function CertificateDetail() {
           <div className="detail-panel-title">시험 일정</div>
           {certificate.schedule.map((item) => (
             <div key={item.round} className="schedule-item">
-              <div className="schedule-round">{item.round}회</div>
+              <div className="schedule-round">{item.round}회차</div>
               <div className="schedule-meta">
                 <div>접수: {item.registration}</div>
                 <div>시험: {item.testDate}</div>
@@ -137,7 +134,7 @@ function CertificateDetail() {
                 id="reviewer"
                 type="text"
                 value={reviewer}
-                placeholder="예: 홍길동 (선택)"
+                placeholder="닉네임 (선택)"
                 onChange={(event) => setReviewer(event.target.value)}
               />
             </div>
@@ -163,7 +160,7 @@ function CertificateDetail() {
             <textarea
               id="comment"
               value={comment}
-              placeholder="시험 준비 팁이나 실제 후기를 남겨주세요."
+              placeholder="시험 준비 경험이나 팁을 작성해 주세요."
               onChange={(event) => setComment(event.target.value)}
             />
           </div>

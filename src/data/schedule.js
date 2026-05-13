@@ -1,4 +1,4 @@
-export const scheduleData = [
+﻿export const scheduleData = [
   {
     name: '정보처리기사',
     registrationPeriod: '2025-05-01 ~ 2025-05-15',
@@ -8,7 +8,7 @@ export const scheduleData = [
     status: '접수중',
   },
   {
-    name: '빅데이터 분석기사',
+    name: '빅데이터분석기사',
     registrationPeriod: '2025-06-10 ~ 2025-06-25',
     examDate: '2025-07-12',
     resultDate: '2025-07-30',
@@ -45,6 +45,6 @@ export const scheduleData = [
     examDate: '2025-07-25',
     resultDate: '2025-08-12',
     fee: '18,000원',
-    status: '접수예정',
+    status: '접수 예정',
   },
 ];
