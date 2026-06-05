@@ -32,7 +32,7 @@ function Home() {
     {
       icon: '📈',
       title: '검색 순위 랭킹',
-      description: '가장 많이 검색된 인기 자격증 TOP 100',
+      description: '가장 많이 검색된 인기 자격증 TOP 10',
       path: '/ranking',
       accent: '#fef9c3',
     },
