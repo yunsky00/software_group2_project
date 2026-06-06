@@ -1,9 +1,10 @@
 """
 즐겨찾기 관련 데이터 검증 스키마 모듈.
+DB 스키마: bookmarks(user_id integer, category_type, category_id).
 """
 from pydantic import BaseModel
 from datetime import datetime
-from app.schemas.certificate import CertificateListResponse
+from typing import Optional, Any
 
 
 class BookmarkResponse(BaseModel):
@@ -12,9 +13,8 @@ class BookmarkResponse(BaseModel):
     """
     id: int
     user_id: int
-    cert_id: int
+    cert_id: int            # category_id를 cert_id로 매핑
     created_at: datetime
-    certificate: CertificateListResponse  # 조인된 자격증 정보 포함
+    certificate: Optional[Any] = None  # 조인된 자격증 정보
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
