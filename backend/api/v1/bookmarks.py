@@ -3,75 +3,24 @@
 """
 from typing import List
 from fastapi import APIRouter, Depends, status, HTTPException
-from sqlalchemy.orm import Session
-
 from app.api import deps
-from app.models.user import User
 from app.crud import crud_bookmark
-from app.schemas.bookmark import BookmarkResponse
 
 router = APIRouter()
 
+@router.get("/")
+def get_my_bookmarks(current_user: dict = Depends(deps.get_current_user)):
+    """마이페이지 즐겨찾기 자격증 목록 조회."""
+    # Supabase Auth의 user meta data에서 커스텀 user_id를 가져오거나 매핑하는 로직 필요
+    user_email = current_user.email
+    return crud_bookmark.get_user_bookmarks(user_id=user_email)
 
-@router.get("/", response_model=List[BookmarkResponse])
-def get_my_bookmarks(
-    db: Session = Depends(deps.get_db),
-    current_user: User = Depends(deps.get_current_user)
-) -> List[BookmarkResponse]:
-    """
-    로그인한 사용자의 마이페이지에서 확인 가능한 즐겨찾기 자격증 목록을 조회.
-
-    Args:
-        db: DB 세션.
-        current_user: 인증된 현재 사용자 객체.
-
-    Returns:
-        사용자의 즐겨찾기 목록.
-    """
-    return crud_bookmark.get_user_bookmarks(db, user_id=current_user.id)
-
-
-@router.post("/{cert_id}", response_model=BookmarkResponse, status_code=status.HTTP_201_CREATED)
-def create_bookmark(
-    cert_id: int,
-    db: Session = Depends(deps.get_db),
-    current_user: User = Depends(deps.get_current_user)
-) -> BookmarkResponse:
-    """
-    특정 자격증을 사용자의 즐겨찾기에 추가.
-
-    Args:
-        cert_id: 자격증 고유 ID.
-        db: DB 세션.
-        current_user: 인증된 현재 사용자 객체.
-
-    Returns:
-        생성된 북마크 객체.
-    """
-    bookmark = crud_bookmark.add_bookmark(db, user_id=current_user.id, cert_id=cert_id)
-    return bookmark
-
+@router.post("/{cert_id}", status_code=status.HTTP_201_CREATED)
+def create_bookmark(cert_id: int, current_user: dict = Depends(deps.get_current_user)):
+    return crud_bookmark.add_bookmark(user_id=current_user.email, cert_id=cert_id)
 
 @router.delete("/{cert_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_bookmark(
-    cert_id: int,
-    db: Session = Depends(deps.get_db),
-    current_user: User = Depends(deps.get_current_user)
-) -> None:
-    """
-    사용자의 즐겨찾기 목록에서 특정 자격증을 삭제.
-
-    Args:
-        cert_id: 삭제할 자격증의 고유 ID.
-        db: DB 세션.
-        current_user: 인증된 현재 사용자 객체.
-
-    Raises:
-        HTTPException: 북마크가 존재하지 않을 때 404 발생.
-    """
-    success = crud_bookmark.remove_bookmark(db, user_id=current_user.id, cert_id=cert_id)
+def delete_bookmark(cert_id: int, current_user: dict = Depends(deps.get_current_user)):
+    success = crud_bookmark.remove_bookmark(user_id=current_user.email, cert_id=cert_id)
     if not success:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, 
-            detail="해당 자격증이 즐겨찾기에 없습니다."
-        )
+        raise HTTPException(status_code=404, detail="해당 자격증이 즐겨찾기에 없습니다.")
