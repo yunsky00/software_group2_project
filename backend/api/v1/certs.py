@@ -1,77 +1,61 @@
 """
-자격증 정보 조회 및 검색 기능을 제공하는 API 라우터 모듈.
+자격증 상세 조회 및 랭킹 엔드포인트 모듈.
+어뷰징 방지 로직과 총 누적 조회수 기반 랭킹을 제공합니다.
 """
-from typing import List, Optional
-from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlalchemy.orm import Session
-
+from fastapi import APIRouter, Depends, Request, HTTPException
+from typing import List, Dict, Any
+from datetime import datetime, timedelta, timezone
 from app.api import deps
+from app.core.supabase_client import supabase
 from app.crud import crud_cert
-from app.schemas.certificate import CertificateListResponse, CertificateDetailResponse
 
 router = APIRouter()
 
-
-@router.get("/", response_model=List[CertificateListResponse])
-def get_certificates(
-    category: str = Query(..., description="1차 분류 (대기업/공기업/공무원)"),
-    job_group: Optional[str] = Query(None, description="2차 분류 (희망 직무)"),
-    keyword: Optional[str] = Query(None, description="검색 키워드"),
-    db: Session = Depends(deps.get_db)
-) -> List[CertificateListResponse]:
+@router.get("/ranking")
+def get_certificate_ranking(limit: int = 10) -> List[Dict[str, Any]]:
     """
-    필터 조건에 맞는 자격증 목록을 검색하여 반환.
-    
-    Args:
-        category: 대기업, 공기업 등 1차 분류.
-        job_group: 희망 직무 (선택).
-        keyword: 검색어 (선택).
-        db: DB 세션.
-        
-    Returns:
-        조건에 부합하는 자격증 축약 정보 목록.
+    총 누적 조회수(view_count) 기준으로 자격증 랭킹을 반환합니다.
     """
-    return crud_cert.search_certificates(
-        db, category=category, job_group=job_group, keyword=keyword
-    )
+    return crud_cert.get_top_ranked(limit)
 
-
-@router.get("/ranking", response_model=List[CertificateListResponse])
-def get_certificate_ranking(db: Session = Depends(deps.get_db)) -> List[CertificateListResponse]:
-    """
-    조회수(View Count)를 기준으로 상위 100개의 인기 자격증을 반환.
-    
-    Args:
-        db: DB 세션.
-        
-    Returns:
-        상위 인기 자격증 목록.
-    """
-    return crud_cert.get_top_ranked(db, limit=100)
-
-
-@router.get("/{cert_id}", response_model=CertificateDetailResponse)
+@router.get("/{cert_id}")
 def get_certificate_detail(
-    cert_id: int,
-    db: Session = Depends(deps.get_db)
-) -> CertificateDetailResponse:
+    cert_id: int, 
+    request: Request, 
+    current_user: dict = Depends(deps.get_current_user)
+):
     """
-    특정 자격증의 상세 정보를 조회합니다. 조회 시 해당 자격증의 조회수가 1 증가.
-
-    Args:
-        cert_id: 조회할 자격증의 고유 ID.
-        db: DB 세션.
-
-    Returns:
-        자격증 상세 정보.
-
-    Raises:
-        HTTPException: 해당 ID의 자격증이 존재하지 않을 경우 404 에러.
+    자격증 상세 정보를 조회하면서, 어뷰징을 방지하여 총 조회수를 증가시킵니다.
     """
-    cert = crud_cert.get_and_increase_view(db, cert_id=cert_id)
-    if cert is None:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="해당 자격증 정보를 찾을 수 없습니다."
-        )
-    return cert
+    # 1. 자격증 기본 정보 조회
+    cert_response = supabase.table("certificates").select("*").eq("id", cert_id).execute()
+    if not cert_response.data:
+        raise HTTPException(status_code=404, detail="존재하지 않는 자격증입니다.")
+    
+    # 2. 어뷰징 방지 검증 (5분 이내 동일 유저 조회 확인)
+    client_ip = request.client.host
+    five_minutes_ago = (datetime.now(timezone.utc) - timedelta(minutes=5)).isoformat()
+    
+    existing_log = supabase.table("certificate_view_logs") \
+        .select("id") \
+        .eq("certificate_id", cert_id) \
+        .eq("user_id", current_user.id) \
+        .gte("viewed_at", five_minutes_ago) \
+        .execute()
+    
+    # 3. 최근 5분 이내 기록이 없다면 로그 기록 및 총 조회수 증가
+    if not existing_log.data:
+        # 로그 기록 (어뷰징 방지용)
+        supabase.table("certificate_view_logs").insert({
+            "certificate_id": cert_id,
+            "user_id": current_user.id,
+            "ip_address": client_ip
+        }).execute()
+        
+        # 총 조회수 1 증가 (DB 반영)
+        crud_cert.increment_view_count(cert_id)
+        
+        # 클라이언트에 반환할 데이터에도 즉시 반영된 조회수를 보여줌
+        cert_response.data[0]["view_count"] = cert_response.data[0].get("view_count", 0) + 1
+        
+    return cert_response.data[0]
