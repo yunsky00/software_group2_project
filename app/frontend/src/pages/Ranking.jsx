@@ -2,9 +2,6 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Ranking.css';
 
-// 수파베이스 클라이언트 가져오기
-import { supabase } from './supabaseClient'; 
-
 const CATEGORY_LABELS = {
   corporate: '민간자격',
   public: '국가전문자격',
@@ -18,39 +15,41 @@ function Ranking() {
   const [loading, setLoading] = useState(true); // 로딩 상태
 
   useEffect(() => {
-    async function fetchRankingData() {
+    async function fetchRankingFromBackend() {
       setLoading(true);
       try {
-        // v_weekly_certificate_ranking 실시간 뷰(View)
-        const { data, error } = await supabase
-          .from('v_weekly_certificate_ranking')
-          .select('*')
-          .limit(10); // 상위 10개만 콕 집어 가져오기
+        //  백엔드 8000번 포트의 API 엔드포인트 호출
+        // (백엔드 설정한 라우터 주소에 맞게 /api/ranking 부분을 조율)
+        const response = await fetch(`http://localhost:8000/api/ranking?type=${viewType}`);
         
-        if (error) throw error;
+        if (!response.ok) {
+          throw new Error('백엔드 서버로부터 응답을 받지 못했습니다.');
+        }
+
+        const data = await response.json(); // 백엔드가 보낸 JSON 배열 파싱
 
         if (data) {
-          // 📊 수파베이스 뷰의 컬럼 구조를 프론트엔드 UI 포맷에 맞게 자석처럼 매칭
+          //  백엔드(DB 뷰)에서 넘어온 컬럼 구조를 프론트 UI 포맷에 맞게 맵핑
           const formattedData = data.map((item, index) => ({
             rank: index + 1,
-            trend: 'none', // 실시간 로그에서는 변동폭 대신 기본 대시(—)로 표기
+            trend: 'none', // 실시간 로그에서는 기본 대시(—)로 표기
             change: 0,
-            name: item.cert_name, // DB의 자격증명
-            category: 'government', // 국가기술자격으로 기본 매칭 (필요시 데이터 추가 가능)
-            searches: item.total_views // DB의 누적 조회수
+            name: item.cert_name, // 백엔드에서 가공해준 자격증명 데이터
+            category: 'government', // 기본 카테고리 매칭
+            searches: item.total_views // 백엔드에서 집계된 누적 조회수
           }));
           
           setRankingList(formattedData);
         }
       } catch (error) {
-        console.error("수파베이스 랭킹 데이터 로드 실패:", error.message);
+        console.error("백엔드 서버로부터 랭킹 데이터 로드 실패:", error.message);
       } finally {
         setLoading(false);
       }
     }
 
-    fetchRankingData();
-  }, [viewType]); // 일간/주간/월간 탭을 누르면 수파베이스에서 최신 데이터 실시간으로 불러옴
+    fetchRankingFromBackend();
+  }, [viewType]); // 일간/주간/월간 탭을 누르면 백엔드 서버(8000번)에 새로 요청을 보냄
 
   // 상단 요약 카드 데이터 실시간 연동
   const topCertificateName = rankingList[0]?.name || '집계 중...';
@@ -59,7 +58,7 @@ function Ranking() {
   const summaryCards = [
     {
       title: '최다 검색',
-      value: topCertificateName, // 실시간 1위 자격증 자동 반영
+      value: topCertificateName, // 백엔드 기준 1위 자격증 자동 반영
       description: 'TOP 검색 자격증',
       variant: 'orange',
     },
@@ -71,7 +70,7 @@ function Ranking() {
     },
     {
       title: 'TOP 10 총 조회수',
-      value: totalSearchesSum, // 상위 10개 자격증의 실시간 총 클릭 수 합산
+      value: totalSearchesSum, // 백엔드에서 받은 상위 10개 자격증 조회수 총합
       description: '현재 랭킹 조회수 합',
       variant: 'purple',
     },
@@ -128,11 +127,11 @@ function Ranking() {
         
         {loading ? (
           <div className="table-row" style={{ justifyContent: 'center', padding: '40px', color: '#888' }}>
-            🔄 실시간 랭킹 집계 중...
+            🔄 실시간 랭킹 가져오는 중...
           </div>
         ) : rankingList.length === 0 ? (
           <div className="table-row" style={{ justifyContent: 'center', padding: '40px', color: '#888' }}>
-            아직 누적된 자격증 조회 로그가 없습니다.
+            서버에 누적된 데이터 로그가 없습니다.
           </div>
         ) : (
           rankingList.map((item) => (
@@ -154,7 +153,7 @@ function Ranking() {
         )}
       </section>
 
-      <div className="view-more">Supabase 실시간 데이터 연동 완료 (TOP 10)</div>
+      <div className="view-more">백엔드 API 연동 완료 (TOP 10)</div>
     </div>
   );
 }
