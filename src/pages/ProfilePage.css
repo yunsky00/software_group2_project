@@ -1,0 +1,238 @@
+.profile-page {
+  display: grid;
+  gap: 28px;
+  width: min(1100px, 100%);
+  margin: 0 auto;
+}
+
+.profile-page__back {
+  margin-top: 4px;
+}
+
+.profile-page__eyebrow {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 34px;
+  align-items: center;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: #edf3ff;
+  color: #3565de;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.profile-page__header h1 {
+  margin: 0;
+  font-size: 42px;
+  letter-spacing: -0.04em;
+}
+
+.profile-page__header p {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1.6;
+  max-width: 760px;
+}
+
+.profile-section {
+  background: var(--surface);
+  border: 1px solid var(--stroke);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+  padding: 30px 28px;
+}
+
+.profile-section h2 {
+  margin: 0 0 18px;
+  font-size: 28px;
+  letter-spacing: -0.03em;
+}
+
+.profile-section__title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.profile-section__title span {
+  color: var(--muted);
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.profile-form {
+  display: grid;
+  gap: 18px;
+}
+
+.profile-form label {
+  display: grid;
+  gap: 10px;
+  font-weight: 700;
+  font-size: 17px;
+}
+
+.profile-form input {
+  min-height: 58px;
+  padding: 0 18px;
+  border-radius: 20px;
+  font-size: 17px;
+}
+
+.profile-actions {
+  margin-top: 8px;
+}
+
+.profile-message {
+  margin: 16px 0 0;
+  color: #2f7d4f;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.profile-list {
+  display: grid;
+  gap: 18px;
+}
+
+.profile-card-link {
+  display: block;
+}
+
+.profile-card {
+  border: 1px solid #e6ebf3;
+  border-radius: 22px;
+  background: var(--surface-soft);
+  padding: 22px 20px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.profile-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 28px rgba(74, 90, 126, 0.08);
+  border-color: #cfdbef;
+}
+
+.profile-card__header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+}
+
+.profile-card__header strong {
+  font-size: 22px;
+}
+
+.profile-card p {
+  margin: 14px 0 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.profile-card__meta {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.profile-card__meta span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #fff;
+  color: #5b667b;
+  font-size: 14px;
+  font-weight: 700;
+  border: 1px solid #e8edf4;
+}
+
+.profile-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: #fff2c8;
+  color: #8a6200;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.profile-chip--soft {
+  background: #edf3ff;
+  color: #426dd9;
+}
+
+.profile-history-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.profile-history-item {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 16px 18px;
+  border-radius: 18px;
+  background: #fff;
+  border: 1px solid #e7ecf3;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.profile-history-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(74, 90, 126, 0.07);
+  border-color: #cfdbef;
+}
+
+.profile-history-item strong {
+  font-size: 17px;
+}
+
+.profile-history-item span {
+  color: var(--muted);
+  font-size: 15px;
+}
+
+.profile-empty {
+  border: 1px dashed #d6dde9;
+  border-radius: 20px;
+  padding: 30px 20px;
+  color: var(--muted);
+  text-align: center;
+  background: #fafcff;
+  font-size: 16px;
+}
+
+@media (max-width: 820px) {
+  .profile-page__header h1 {
+    font-size: 34px;
+  }
+
+  .profile-page__header p {
+    font-size: 16px;
+  }
+
+  .profile-card__header,
+  .profile-history-item,
+  .profile-section__title {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .profile-section {
+    padding: 24px 20px;
+  }
+}
