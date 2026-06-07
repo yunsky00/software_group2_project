@@ -11,7 +11,7 @@ function CertificateDetail() {
   const [reviews, setReviews] = useState([]);
   const [reviewer, setReviewer] = useState('');
   const [rating, setRating] = useState(5);
-  const [comment, setComment] = useState('');
+  const [댓글, setComment] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -22,7 +22,6 @@ function CertificateDetail() {
         const identifier = isNumeric ? parseInt(id, 10) : decodeURIComponent(id);
         const column = isNumeric ? 'id' : 'name';
 
-        // 1. 자격증 기본 정보 가져오기
         const { data: certData, error: certError } = await supabase
           .from('certificates')
           .select('*')
@@ -31,7 +30,6 @@ function CertificateDetail() {
 
         if (certError) throw certError;
 
-        // 2. 나머지 데이터를 각각 따로 가져오기 (가장 확실한 방법!)
         const [scheduleRes, subjectRes, benefitRes, reviewRes] = await Promise.all([
           supabase.from('exam_schedules').select('*').eq('certificate_id', certData.id),
           supabase.from('exam_subjects').select('*').eq('certificate_id', certData.id),
@@ -39,7 +37,6 @@ function CertificateDetail() {
           supabase.from('reviews').select('*').eq('certificate_id', certData.id).order('created_at', { ascending: false })
         ]);
 
-        // 3. 데이터를 합쳐서 상태 업데이트
         setCertificate({
           ...certData,
           exam_schedules: scheduleRes.data || [],
