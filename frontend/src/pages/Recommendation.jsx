@@ -1,153 +1,186 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import './Recommendation.css';
+import { Link, useNavigate } from 'react-router-dom';
 
-function Recommendation() {
+const careerOptions = ['대기업', '공기업', '공무원'];
+const experienceOptions = ['신입', '1-3년', '4-7년', '8년 이상'];
+const interestOptions = ['IT', '데이터', '보안', '경영', '마케팅', '생산관리'];
+
+function RecommendationPage() {
   const navigate = useNavigate();
-  const [careerField, setCareerField] = useState('');
+  const [career, setCareer] = useState('공기업');
   const [major, setMajor] = useState('');
-  const [experience, setExperience] = useState('');
+  const [experience, setExperience] = useState('1-3년');
   const [goal, setGoal] = useState('');
-  const [recommendations, setRecommendations] = useState([]);
+  const [interests, setInterests] = useState(['데이터']);
+  
+  const [recommendations, setRecommendations] = useState([]); // 🟢 백엔드 AI 엔진에서 내려준 자격증 리스트
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const careerOptions = ['대기업', '공기업', '공무원'];
-  const experienceOptions = ['신입', '1-3년', '4-7년', '8년 이상'];
-
-  const recommendationItems = [
-    {
-      name: '정보처리기사',
-      careerField: '대기업',
-      major: '컴퓨터공학',
-      description: 'IT 직무에 맞춘 기본 자격증입니다.',
-    },
-    {
-      name: '빅데이터 분석기사',
-      careerField: '공기업',
-      major: '통계학',
-      description: '데이터 직무에 강한 분석 자격증입니다.',
-    },
-    {
-      name: '디지털 마케팅 전문가',
-      careerField: '대기업',
-      major: '경영학',
-      description: '마케팅 직무에 필요한 디지털 역량을 인증합니다.',
-    },
-    {
-      name: '사회조사분석사 2급',
-      careerField: '공무원',
-      major: '통계학',
-      description: '데이터 기반 조사 분석에 강한 자격증입니다.',
-    },
-  ];
-
-  const handleRecommend = () => {
-    const filtered = recommendationItems.filter((item) => {
-      const careerMatch = careerField ? item.careerField === careerField : true;
-      const majorMatch = major ? item.major.includes(major) : true;
-      return careerMatch && majorMatch;
-    });
-
-    setRecommendations(filtered.length ? filtered : recommendationItems);
+  const toggleInterest = (option) => {
+    setInterests((current) =>
+      current.includes(option) ? current.filter((item) => item !== option) : [...current, option],
+    );
   };
 
+  // 🌐 백엔드 8000번 포트로 설문 데이터 전송 및 DB 적재 프로세스 구동
+  async function handleSubmit() {
+    setLoading(true);
+    setSubmitted(false);
+    try {
+      const response = await fetch('http://localhost:8000/api/recommend', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          career,
+          major: major.trim(),
+          experience,
+          interests,
+          goal: goal.trim()
+        })
+      });
+
+      if (!response.ok) throw new Error('AI 서버 연동 실패');
+      
+      const data = await response.json();
+      // 백엔드가 조건 필터링/가중치 연산 후 내려준 결과 배열 바인딩
+      setRecommendations(data.recommendations || []);
+      setSubmitted(true);
+    } catch (error) {
+      console.error('AI 맞춤 추천 알고리즘 로드 실패:', error);
+      alert('백엔드 추천 API 서버 상태를 확인해 주세요.');
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <div className="recommendation-page">
-      <button type="button" className="back-button" onClick={() => navigate(-1)}>
-        ← 돌아가기
-      </button>
+    <div className="page-stack recommendation-page">
+      <Link to="/" className="back-link">← 돌아가기</Link>
 
-      <header className="recommendation-header">
-        <div className="recommendation-badge">✨</div>
-        <div>
-          <h1 className="recommendation-title">AI 맞춤 자격증 추천</h1>
-          <p className="recommendation-description">
-            몇 가지 질문에 답하시면 당신에게 최적화된 자격증을 추천해드립니다.
-          </p>
+      <section className="recommendation-page__header">
+        <div className="recommendation-page__title">
+          <span className="recommendation-page__icon">🎯</span>
+          <div>
+            <h1>직무 맞춤 추천</h1>
+            <p>맞춤형 스펙 추천 시스템</p>
+          </div>
         </div>
-      </header>
+      </section>
 
-      <section className="form-card">
-        <div className="question-block">
-          <div className="question-label">1. 희망 진로 분야를 선택해주세요 *</div>
-          <div className="option-grid">
-            {careerOptions.map((option) => (
+      {/* 설문 입력 스택 인터페이스 */}
+      <section className="panel recommendation-form">
+        <div className="recommendation-form-section">
+          <h2>1. 취업 희망 목표를 선택하세요</h2>
+          <div className="filter-row filter-row--compact">
+            {careerOptions.map((item) => (
               <button
+                key={item}
                 type="button"
-                key={option}
-                className={`option-button ${careerField === option ? 'active' : ''}`}
-                onClick={() => setCareerField(option)}
+                className={`chip chip--tab${career === item ? ' chip--active chip--violet' : ''}`}
+                onClick={() => setCareer(item)}
               >
-                {option}
+                {item}
               </button>
             ))}
           </div>
         </div>
 
-        <div className="question-block">
-          <div className="question-label">3. 전공을 입력해주세요</div>
+        <div className="recommendation-form-section">
+          <h2>2. 전공 또는 학과를 입력해 주세요</h2>
           <input
-            className="text-input"
             type="text"
+            className="search-bar__input"
+            style={{ width: '100%', maxWidth: '500px', border: '1px solid var(--stroke)', borderRadius: '12px', padding: '12px 16px' }}
             value={major}
-            placeholder="예: 컴퓨터공학과"
             onChange={(event) => setMajor(event.target.value)}
+            placeholder="예: 컴퓨터공학, 경영학, 통계학과 등..."
           />
         </div>
 
-        <div className="question-block">
-          <div className="question-label">4. 경력을 선택해주세요 *</div>
-          <div className="option-grid">
-            {experienceOptions.map((option) => (
+        <div className="recommendation-form-section">
+          <h2>3. 현재 실무 경력 상태를 알려주세요</h2>
+          <div className="filter-row filter-row--compact">
+            {experienceOptions.map((item) => (
               <button
+                key={item}
                 type="button"
-                key={option}
-                className={`option-button ${experience === option ? 'active' : ''}`}
-                onClick={() => setExperience(option)}
+                className={`chip chip--tab${experience === item ? ' chip--active chip--violet' : ''}`}
+                onClick={() => setExperience(item)}
               >
-                {option}
+                {item}
               </button>
             ))}
           </div>
         </div>
 
-        <div className="question-block">
-          <div className="question-label">5. 자격증 취득 목표를 알려주세요</div>
+        <div className="recommendation-form-section">
+          <h2>4. 관심 있는 직무/기술 키워드를 선택하세요 (중복 가능)</h2>
+          <div className="filter-row filter-row--compact">
+            {interestOptions.map((item) => (
+              <button
+                key={item}
+                type="button"
+                className={`chip chip--tab${interests.includes(item) ? ' chip--active chip--violet' : ''}`}
+                onClick={() => toggleInterest(item)}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="recommendation-form-section">
+          <h2>5. 자격증 취득 목적 및 최종 목표</h2>
           <textarea
-            className="text-area"
             rows="4"
+            style={{ width: '100%', border: '1px solid var(--stroke)', borderRadius: '16px', padding: '16px', fontSize: '15px' }}
             value={goal}
-            placeholder="예: 대기업 취업을 위한 스펙 준비, 이직을 위한 기술 증명 등"
             onChange={(event) => setGoal(event.target.value)}
+            placeholder="예: 상반기 대기업 백엔드 직무 서류 통과 가산점 획득 목적"
           />
         </div>
 
-        <div className="submit-area">
-          <button type="button" className="recommend-button" onClick={handleRecommend}>
-            <span className="button-icon">✨</span> AI 추천 받기
+        <div className="recommendation-cta">
+          <button type="button" className="recommendation-cta__button" onClick={handleSubmit} disabled={loading}>
+            {loading ? '🔄 알고리즘 구동 중...' : '✨ AI 추천 받기'}
           </button>
         </div>
       </section>
 
-      <section className="result-section">
-        {recommendations.length > 0 ? (
-          recommendations.map((item) => (
-            <article key={item.name} className="result-card">
-              <h2 className="result-card-title">{item.name}</h2>
-              <p className="result-card-meta">{item.careerField} · 전공 추천: {item.major}</p>
-              <p className="result-card-description">{item.description}</p>
-            </article>
-          ))
+      {/* 추천 매칭 결과 섹션 */}
+      <section className="recommendation-result-panel">
+        <h2>추천 매칭 결과 레코드</h2>
+        {loading ? (
+          <p style={{ color: 'var(--muted)', textAlign: 'center', padding: '20px' }}>매칭 연산을 수행하는 중입니다...</p>
+        ) : !submitted ? (
+          <p>정보 입력 후 하단의 버튼을 클릭하면, 실시간 적합 자격증이 정렬됩니다.</p>
         ) : (
-          <article className="result-card empty-card">
-            <h2 className="result-card-title">추천 결과를 확인해보세요</h2>
-            <p className="result-card-description">
-              입력 후 AI 추천 받기 버튼을 눌러 결과를 확인할 수 있습니다.
-            </p>
-          </article>
+          <div className="recommendation-result-list">
+            {recommendations.length > 0 ? (
+              recommendations.map((item) => (
+                <article key={item.id} className="recommendation-result-card">
+                  <div className="recommendation-result-card__header">
+                    <strong>{item.name}</strong>
+                    <span className="chip" style={{ fontSize: '12px', background: '#f0f3ff', color: '#3164e0' }}>{item.field}</span>
+                  </div>
+                  <p>{item.reason || `${item.name} 자격증은 기재하신 관심 분야 및 직무 요건에 부합하여 가산점 획득 확률이 높습니다.`}</p>
+                  <div className="recommendation-result-card__meta">
+                    <span>예상 준비 기간: <strong>{item.preparation_period || item.preparationPeriod || '2개월'}</strong></span>
+                    <button type="button" className="button button--primary" style={{ padding: '6px 14px', fontSize: '13px' }} onClick={() => navigate(`/certificate/${item.id}`)}>
+                      상세 레코드 보기 →
+                    </button>
+                  </div>
+                </article>
+              ))
+            ) : (
+              <p style={{ color: 'var(--muted)', padding: '20px' }}>작성하신 필터 조건에 부합하는 자격증 레코드가 DB에 없습니다.</p>
+            )}
+          </div>
         )}
       </section>
     </div>
   );
 }
 
-export default Recommendation;
+export default RecommendationPage;

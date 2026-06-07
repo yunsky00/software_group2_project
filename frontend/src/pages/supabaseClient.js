@@ -1,7 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
 
-// 수파베이스 웹사이트 프로젝트 대시보드(Settings -> API)에 있는 주소와 Anon 키를 적어줍니다.
-const SUPABASE_URL = 'https://kxbbcnjzfmfdrlvdsdsb.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt4YmJjbmp6Zm1mZHJsdmRzZHNiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NzEyMzgsImV4cCI6MjA5NDI0NzIzOH0.VGF-PDx7uFrN87Fo-xbpYIM9kWIL3YMjQkAJS21wOdM';
+// Vite에서는 import.meta.env를 사용합니다.
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// 값이 잘 들어왔는지 확인하는 코드 (에러 발생 시 콘솔 확인)
+if (!supabaseUrl || !supabaseKey) {
+  console.error("Supabase 환경변수를 찾을 수 없습니다. .env 파일 이름과 VITE_ 접두사를 확인하세요.");
+}
+
+export const supabase = createClient(supabaseUrl, supabaseKey);

@@ -1,50 +1,30 @@
+// Schedule.jsx (수정된 전체 코드)
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { scheduleData } from '../data/schedule';
+import { scheduleData } from '../data/schedule'; // 이 경로 확인하세요!
 import './Schedule.css';
 
 function Schedule() {
   const navigate = useNavigate();
-  // 상태 필터를 관리합니다.
   const [filter, setFilter] = useState('전체');
-
-  // 상태 필터 옵션
   const statusOptions = ['전체', '접수 예정', '접수중', '마감임박'];
 
-  // 선택한 필터에 맞춰 리스트를 걸러냅니다.
   const filteredSchedule = filter === '전체'
     ? scheduleData
     : scheduleData.filter((item) => item.status === filter);
 
-  // D-day를 계산하는 도우미 함수
+  // D-day 계산 로직 강화 (날짜가 없을 때 에러 방지)
   const getDDay = (examDate) => {
+    if (!examDate) return '미정';
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
     const exam = new Date(examDate);
     const diff = Math.ceil((exam - today) / (1000 * 60 * 60 * 24));
-    return diff >= 0 ? `D-${diff}` : `D+${Math.abs(diff)}`;
+    
+    if (diff < 0) return `D+${Math.abs(diff)}`;
+    if (diff === 0) return 'D-Day';
+    return `D-${diff}`;
   };
-
-  // 상단 상태 카드 데이터
-  const summary = [
-    {
-      title: '접수 예정',
-      count: scheduleData.filter((item) => item.status === '접수 예정').length,
-      color: 'status-blue',
-    },
-    {
-      title: '접수중',
-      count: scheduleData.filter((item) => item.status === '접수중').length,
-      color: 'status-green',
-    },
-    {
-      title: '긴급 (D-7 이내)',
-      count: scheduleData.filter((item) => {
-        const diff = Math.ceil((new Date(item.examDate) - new Date()) / (1000 * 60 * 60 * 24));
-        return diff >= 0 && diff <= 7;
-      }).length,
-      color: 'status-red',
-    },
-  ];
 
   const getChipClass = (status) => {
     if (status === '접수중') return 'status-chip status-chip-open';
@@ -60,21 +40,11 @@ function Schedule() {
       </button>
       
       <header className="schedule-header">
-        <div>
-          <h1 className="schedule-title">D-day 시험일정 캘린더</h1>
-          <p className="schedule-description">다가오는 자격증 시험 일정과 접수 상태를 한눈에 확인하세요.</p>
-        </div>
+        <h1>D-day 시험일정 리스트</h1>
+        <p>다가오는 자격증 시험 일정과 접수 상태를 확인하세요.</p>
       </header>
 
-      <section className="status-grid">
-        {summary.map((item) => (
-          <article key={item.title} className={`status-card ${item.color}`}>
-            <p className="status-card-title">{item.title}</p>
-            <p className="status-card-value">{item.count}개</p>
-          </article>
-        ))}
-      </section>
-
+      {/* 필터 버튼들 */}
       <div className="schedule-filters">
         {statusOptions.map((option) => (
           <button
@@ -89,12 +59,13 @@ function Schedule() {
       </div>
 
       <section className="schedule-list">
-        {filteredSchedule.map((item) => (
-          <article key={item.name} className="schedule-item">
+        {filteredSchedule.map((item, idx) => (
+          <article key={idx} className="schedule-item">
             <div className="schedule-card-badge">
               <div className="dday-icon">D</div>
-              <div className="dday-count">{getDDay(item.examDate).replace('D-', '')}</div>
+              <div className="dday-count">{getDDay(item.examDate).replace('D-', '').replace('D+', '')}</div>
             </div>
+            
             <div className="schedule-card-body">
               <div className="schedule-item-header">
                 <div>
@@ -107,7 +78,8 @@ function Schedule() {
               <div className="schedule-meta-grid">
                 <div className="schedule-meta-item">
                   <span>접수기간</span>
-                  <strong>{item.registrationPeriod}</strong>
+                  {/* 💡 여기가 핵심: 데이터 필드를 조합해서 출력 */}
+                  <strong>{item.registrationStart} ~ {item.registrationEnd}</strong>
                 </div>
                 <div className="schedule-meta-item">
                   <span>시험일</span>
