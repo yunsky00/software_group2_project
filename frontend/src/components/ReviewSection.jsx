@@ -1,14 +1,13 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../pages/supabaseClient'; // 💡 본인 프로젝트의 client 파일 경로로 수정하세요
+import { supabase } from '../pages/supabaseClient'; 
 
 function ReviewSection() {
-  const [reviews, setReviews] = useState([]); // 💡 더미 데이터 제거, 빈 배열로 시작
+  const [reviews, setReviews] = useState([]);
   const [author, setAuthor] = useState('');
   const [rating, setRating] = useState(5);
-  const [comment, setComment] = useState('');
+  const [댓글, setComment] = useState('');
   const [loading, setLoading] = useState(true);
 
-  // 1. 컴포넌트 로드 시 데이터 가져오기
   useEffect(() => {
     async function fetchReviews() {
       const { data, error } = await supabase
@@ -26,20 +25,19 @@ function ReviewSection() {
     fetchReviews();
   }, []);
 
-  // 2. 후기 등록 로직
   const handleSubmit = async () => {
     if (!comment.trim()) return;
 
     const newReview = {
       author: author.trim() || '익명',
       rating,
-      comment: comment.trim(),
+      댓글: comment.trim(),
     };
 
     const { data, error } = await supabase
       .from('comment')
       .insert([newReview])
-      .select(); // DB에서 생성된 id 등을 바로 받기 위해 select() 사용
+      .select(); 
 
     if (error) {
       console.error('후기 등록 실패:', error);
