@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { supabase } from './supabaseClient'; // 본인의 supabaseClient 경로에 맞게 수정
+import { supabase } from './supabaseClient'; 
 
 function LogoutButton({ className }) {
   const navigate = useNavigate();
@@ -12,8 +12,8 @@ function LogoutButton({ className }) {
       if (error) throw error;
 
       alert('로그아웃 되었습니다.');
-      navigate('/'); // 로그아웃 후 홈으로 이동
-      window.location.reload(); // 상태 초기화를 위해 새로고침 (선택 사항)
+      navigate('/'); 
+      window.location.페이지를 새로고침(); 
       
     } catch (error) {
       console.error('로그아웃 에러:', error.message);
@@ -22,7 +22,7 @@ function LogoutButton({ className }) {
 
   return (
     <button 
-      type="button" 
+      입력="button" 
       onClick={handleLogout} 
       className={className || 'button'}
     >
@@ -31,4 +31,4 @@ function LogoutButton({ className }) {
   );
 }
 
-export default LogoutButton;
+export 기본 LogoutButton;
