@@ -1,35 +1,55 @@
-import { useState } from 'react';
-
-const initialReviews = [
-  {
-    id: 1,
-    author: '김하나',
-    rating: 5,
-    comment: '문제 난이도는 적당했고 기출 유형과 유사해서 도움이 됐습니다.',
-  },
-  {
-    id: 2,
-    author: '이준',
-    rating: 4,
-    comment: '혼자 준비하기보다 스터디를 병행하면 더 좋습니다.',
-  },
-];
+import { useState, useEffect } from 'react';
+import { supabase } from '../pages/supabaseClient'; // 💡 본인 프로젝트의 client 파일 경로로 수정하세요
 
 function ReviewSection() {
-  const [reviews, setReviews] = useState(initialReviews);
+  const [reviews, setReviews] = useState([]); // 💡 더미 데이터 제거, 빈 배열로 시작
   const [author, setAuthor] = useState('');
   const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
+  const [loading, setLoading] = useState(true);
 
-  const handleSubmit = () => {
+  // 1. 컴포넌트 로드 시 데이터 가져오기
+  useEffect(() => {
+    async function fetchReviews() {
+      const { data, error } = await supabase
+        .from('comment')
+        .select('*')
+        .order('created_at', { ascending: false }); // 최신순 정렬
+      
+      if (error) {
+        console.error('후기 로드 실패:', error);
+      } else {
+        setReviews(data || []);
+      }
+      setLoading(false);
+    }
+    fetchReviews();
+  }, []);
+
+  // 2. 후기 등록 로직
+  const handleSubmit = async () => {
     if (!comment.trim()) return;
-    setReviews((current) => [
-      { id: Date.now(), author: author.trim() || '익명', rating, comment: comment.trim() },
-      ...current,
-    ]);
-    setAuthor('');
-    setRating(5);
-    setComment('');
+
+    const newReview = {
+      author: author.trim() || '익명',
+      rating,
+      comment: comment.trim(),
+    };
+
+    const { data, error } = await supabase
+      .from('comment')
+      .insert([newReview])
+      .select(); // DB에서 생성된 id 등을 바로 받기 위해 select() 사용
+
+    if (error) {
+      console.error('후기 등록 실패:', error);
+      alert('등록에 실패했습니다.');
+    } else {
+      setReviews([data[0], ...reviews]); // UI 즉시 업데이트
+      setAuthor('');
+      setRating(5);
+      setComment('');
+    }
   };
 
   return (
@@ -80,15 +100,19 @@ function ReviewSection() {
       </button>
 
       <div className="review-list">
-        {reviews.map((review) => (
-          <article key={review.id} className="review-card">
-            <div className="review-card__header">
-              <strong>{review.author}</strong>
-              <span>{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</span>
-            </div>
-            <p>{review.comment}</p>
-          </article>
-        ))}
+        {loading ? (
+          <p>로딩 중...</p>
+        ) : (
+          reviews.map((review) => (
+            <article key={review.id} className="review-card">
+              <div className="review-card__header">
+                <strong>{review.author}</strong>
+                <span>{'★'.repeat(review.rating)}{'☆'.repeat(5 - review.rating)}</span>
+              </div>
+              <p>{review.comment}</p>
+            </article>
+          ))
+        )}
       </div>
     </section>
   );

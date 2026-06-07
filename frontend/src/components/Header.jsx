@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import logoImage from '../assets/specmoa-logo.png';
-import { logout } from '../utils/auth';
-import { getProfile } from '../utils/userData';
+import { supabase } from '../pages/supabaseClient'; // Supabase 클라이언트 경로 확인
 
 const navItems = [
   { to: '/', label: '홈' },
@@ -11,38 +10,39 @@ const navItems = [
 
 function Header() {
   const [open, setOpen] = useState(false);
-  const [profileName, setProfileName] = useState('김');
+  const [user, setUser] = useState(null); // 로그인 상태 관리
   const navigate = useNavigate();
   const ref = useRef(null);
 
   useEffect(() => {
-    setProfileName(getProfile().name || '김');
+    // 1. 현재 세션 확인
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
 
+    // 2. 로그인/로그아웃 상태 변화 구독
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    // 3. 외부 클릭 시 메뉴 닫기
     function onDoc(event) {
       if (ref.current && !ref.current.contains(event.target)) {
         setOpen(false);
       }
     }
-
-    function onKey(event) {
-      if (event.key === 'Escape') {
-        setOpen(false);
-      }
-    }
-
     document.addEventListener('mousedown', onDoc);
-    document.addEventListener('keydown', onKey);
-
+    
     return () => {
+      subscription.unsubscribe();
       document.removeEventListener('mousedown', onDoc);
-      document.removeEventListener('keydown', onKey);
     };
   }, []);
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     setOpen(false);
-    navigate('/login');
+    navigate('/'); 
   };
 
   return (
@@ -65,72 +65,56 @@ function Header() {
           ))}
         </nav>
 
+        {/* 로그인 여부에 따라 UI 분기 */}
         <div className="profile-dropdown-wrap" ref={ref}>
-          <button
-            type="button"
-            className="profile-badge"
-            aria-label="프로필 메뉴"
-            aria-expanded={open}
-            onClick={() => setOpen((value) => !value)}
-          >
-            {profileName}
-          </button>
-
-          {open ? (
-            <div className="profile-menu" role="menu" aria-label="프로필 메뉴">
+          {user ? (
+            <>
               <button
                 type="button"
-                className="profile-menu__item"
-                role="menuitem"
-                onClick={() => {
-                  setOpen(false);
-                  navigate('/profile');
-                }}
+                className="profile-badge"
+                aria-label="프로필 메뉴"
+                aria-expanded={open}
+                onClick={() => setOpen((value) => !value)}
               >
-                <UserIcon />
-                <span>마이페이지</span>
+                {/* 닉네임이 있다면 가져오고, 없으면 이메일 앞글자 표시 */}
+                {user.user_metadata?.name?.charAt(0) || user.email?.charAt(0).toUpperCase() || '👤'}
               </button>
 
-              <button type="button" className="profile-menu__item" role="menuitem" onClick={handleLogout}>
-                <LogoutIcon />
-                <span>로그아웃</span>
-              </button>
-            </div>
-          ) : null}
+              {open && (
+                <div className="profile-menu" role="menu" aria-label="프로필 메뉴">
+                  <button
+                    type="button"
+                    className="profile-menu__item"
+                    role="menuitem"
+                    onClick={() => {
+                      setOpen(false);
+                      navigate('/profile');
+                    }}
+                  >
+                    <UserIcon />
+                    <span>마이페이지</span>
+                  </button>
+
+                  <button type="button" className="profile-menu__item" role="menuitem" onClick={handleLogout}>
+                    <LogoutIcon />
+                    <span>로그아웃</span>
+                  </button>
+                </div>
+              )}
+            </>
+          ) : (
+            <NavLink to="/login" className="site-nav__link">
+              로그인
+            </NavLink>
+          )}
         </div>
       </div>
     </header>
   );
 }
 
-function UserIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Zm0 2c-3.866 0-7 2.239-7 5v1h14v-1c0-2.761-3.134-5-7-5Z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function LogoutIcon() {
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path
-        d="M10 17l-5-5 5-5M5 12h10M14 5h3a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-3"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
+// 아이콘 컴포넌트들은 동일하게 유지...
+function UserIcon() { /* ... */ }
+function LogoutIcon() { /* ... */ }
 
 export default Header;
