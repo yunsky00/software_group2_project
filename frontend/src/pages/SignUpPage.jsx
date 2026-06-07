@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-// 🟢 수파베이스 클라이언트 임포트
 import { supabase } from './supabaseClient'; 
 
 function SignUpPage() {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
-  const [nickname, setNickname] = useState(''); // 📌 테이블 구조에 맞게 닉네임 상태 추가
+  const [nickname, setNickname] = useState(''); 
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -27,7 +26,6 @@ function SignUpPage() {
     }
 
     try {
-      // 🛠️ 내장 Auth 대신 다빈님이 만든 users 테이블에 회원 데이터 직접 INSERT
       const { data, error } = await supabase
         .from('users') // 커스텀 테이블 타깃팅
         .insert([
@@ -86,8 +84,7 @@ function SignUpPage() {
               required
             />
           </label>
-
-          {/* 📌 테이블 구조 매칭을 위한 닉네임 입력란 추가 */}
+          
           <label>
             <span>닉네임</span>
             <input
