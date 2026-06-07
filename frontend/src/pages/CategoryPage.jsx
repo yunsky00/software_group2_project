@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { 링크, useParams } from 'react-router-dom';
 import CertificationCard from '../components/CertificationCard';
 import { categoryMeta } from '../data/certifications';
 import { supabase } from './supabaseClient'; 
 
 function CategoryPage() {
-  const { type } = useParams();
+  const { 입력 } = useParams();
   const [items, setItems] = useState([]);
   const [selectedField, setSelectedField] = useState('전체');
   const [isLoading, setIsLoading] = useState(true);
@@ -16,7 +16,7 @@ function CategoryPage() {
     async function fetchCategoryItems() {
       setIsLoading(true);
       try {
-        // 1. DB값과 매핑 (대소문자 확실하게 체크하세요!)
+
         const typeMap = {
           'corporate': 'corporate', '대기업': 'corporate',
           'public': 'public', '공기업': 'public',
@@ -26,7 +26,6 @@ function CategoryPage() {
         const resolvedCategory = typeMap[type] || type;
         console.log("🔍 DB 조회 시도 (category 컬럼):", resolvedCategory);
 
-        // 2. DB 컬럼명은 'category'입니다.
         const { data, error } = await supabase
           .from('certificates')
           .select('*')
@@ -76,7 +75,6 @@ function CategoryPage() {
                   item={{ 
                     ...item, 
                     title: item.name, 
-                    // 🟢 핵심 수정: DB의 'issuer'를 'organization'으로 전달
                     organization: item.issuer 
                   }} 
                 />
