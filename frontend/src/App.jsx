@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
-import { supabase } from './pages/supabaseClient'; // 본인의 supabaseClient 경로에 맞게 확인하세요
+import { supabase } from './pages/supabaseClient'; 
 import Header from './components/Header';
 import Layout from './components/Layout';
 
@@ -37,7 +37,7 @@ function AppShell() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // 🛡️ 로딩 중일 때는 아무것도 렌더링하지 않아 화면 깜빡임을 방지합니다.
+  // 로딩 중일 때는 아무것도 렌더링하지 않아 화면 깜빡임을 방지
   if (loading) return null; 
 
   const isAuthPage = location.pathname === '/login' || location.pathname === '/signup';
