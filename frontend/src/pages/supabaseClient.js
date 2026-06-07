@@ -1,6 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
 
-// Vite에서는 import.meta.env를 사용합니다.
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
