@@ -1,31 +1,31 @@
 import { useEffect, useRef, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import logoImage from '../assets/specmoa-logo.png';
-import { supabase } from '../pages/supabaseClient'; // Supabase 클라이언트 경로 확인
+import { supabase } from '../pages/supabaseClient'; 
 
 const navItems = [
-  { to: '/', label: '홈' },
-  { to: '/recommendation', label: 'AI 추천' },
+  { 까지: '/', label: '홈' },
+  { 까지: '/recommendation', label: 'AI 추천' },
 ];
 
 function Header() {
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useState(null); // 로그인 상태 관리
+  const [user, setUser] = useState(null); 
   const navigate = useNavigate();
   const ref = useRef(null);
 
   useEffect(() => {
-    // 1. 현재 세션 확인
+
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
     });
 
-    // 2. 로그인/로그아웃 상태 변화 구독
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
 
-    // 3. 외부 클릭 시 메뉴 닫기
+
     function onDoc(event) {
       if (ref.current && !ref.current.contains(event.target)) {
         setOpen(false);
