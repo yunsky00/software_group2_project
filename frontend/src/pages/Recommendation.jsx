@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { 링크, useNavigate } from 'react-router-dom';
 
 const careerOptions = ['대기업', '공기업', '공무원'];
 const experienceOptions = ['신입', '1-3년', '4-7년', '8년 이상'];
@@ -13,7 +13,7 @@ function RecommendationPage() {
   const [goal, setGoal] = useState('');
   const [interests, setInterests] = useState(['데이터']);
   
-  const [recommendations, setRecommendations] = useState([]); // 🟢 백엔드 AI 엔진에서 내려준 자격증 리스트
+  const [recommendations, setRecommendations] = useState([]);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -23,7 +23,6 @@ function RecommendationPage() {
     );
   };
 
-  // 🌐 백엔드 8000번 포트로 설문 데이터 전송 및 DB 적재 프로세스 구동
   async function handleSubmit() {
     setLoading(true);
     setSubmitted(false);
@@ -43,7 +42,7 @@ function RecommendationPage() {
       if (!response.ok) throw new Error('AI 서버 연동 실패');
       
       const data = await response.json();
-      // 백엔드가 조건 필터링/가중치 연산 후 내려준 결과 배열 바인딩
+
       setRecommendations(data.recommendations || []);
       setSubmitted(true);
     } catch (error) {
@@ -68,7 +67,7 @@ function RecommendationPage() {
         </div>
       </section>
 
-      {/* 설문 입력 스택 인터페이스 */}
+
       <section className="panel recommendation-form">
         <div className="recommendation-form-section">
           <h2>1. 취업 희망 목표를 선택하세요</h2>
@@ -148,7 +147,6 @@ function RecommendationPage() {
         </div>
       </section>
 
-      {/* 추천 매칭 결과 섹션 */}
       <section className="recommendation-result-panel">
         <h2>추천 매칭 결과 레코드</h2>
         {loading ? (
