@@ -1,0 +1,9 @@
+# 환경 변수 파일 (GitHub에 올라가지 않게 막음)
+.env
+
+# 의존성 모듈
+node_modules
+
+# 빌드 결과물
+dist
+build
