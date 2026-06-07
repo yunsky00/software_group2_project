@@ -43,8 +43,7 @@ function Schedule() {
         <h1>D-day 시험일정 리스트</h1>
         <p>다가오는 자격증 시험 일정과 접수 상태를 확인하세요.</p>
       </header>
-
-      {/* 필터 버튼들 */}
+      
       <div className="schedule-filters">
         {statusOptions.map((option) => (
           <button
@@ -78,7 +77,7 @@ function Schedule() {
               <div className="schedule-meta-grid">
                 <div className="schedule-meta-item">
                   <span>접수기간</span>
-                  {/* 💡 여기가 핵심: 데이터 필드를 조합해서 출력 */}
+
                   <strong>{item.registrationStart} ~ {item.registrationEnd}</strong>
                 </div>
                 <div className="schedule-meta-item">
