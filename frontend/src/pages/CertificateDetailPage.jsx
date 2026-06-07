@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { 링크, useParams } from 'react-router-dom';
 import ReviewSection from '../components/ReviewSection';
 import { isBookmarked, toggleBookmark } from '../utils/userData';
 import { supabase } from './supabaseClient';
-import { trackView } from '../utils/tracking'; // 👈 조회수 기록 함수 임포트
+import { trackView } from '../utils/tracking'; 
 
 function CertificateDetailPage() {
   const { id } = useParams();
@@ -11,12 +11,12 @@ function CertificateDetailPage() {
   const [bookmarked, setBookmarked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
-  // 1. 데이터 불러오기 및 조회수 기록을 위한 useEffect
+ 
   useEffect(() => {
     async function fetchDetail() {
       setIsLoading(true);
       try {
-        // DB에서 해당 id의 데이터 조회
+
         const { data, error } = await supabase
           .from('certificates')
           .select('*')
@@ -38,7 +38,7 @@ function CertificateDetailPage() {
 
     if (id) {
       fetchDetail();
-      trackView(id); // 👈 페이지 진입 시 조회수 기록 함수 실행
+      trackView(id); 
     }
   }, [id]);
 
