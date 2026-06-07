@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { 링크, useNavigate } from 'react-router-dom';
 import { supabase } from './supabaseClient'; 
 
 const categoryMeta = {
   corporate: { title: '대기업 취업', icon: '🏢' },
-  public: { title: '공기업/공사', icon: '🏛️' },
+  공개: { title: '공기업/공사', icon: '🏛️' },
   government: { title: '공무원/공직', icon: '🎖️' },
 };
 
@@ -16,19 +16,19 @@ const categoryCards = [
 
 const featureCards = [
   {
-    to: '/ranking',
+    까지: '/ranking',
     icon: '📈',
     title: '검색 순위 랭킹',
     description: '가장 많이 검색된 인기 자격증 TOP 10',
   },
   {
-    to: '/recommendation',
+    까지: '/recommendation',
     icon: '🎯',
     title: '직무 맞춤 추천',
     description: 'AI 기반 개인 맞춤형 자격증 추천',
   },
   {
-    to: '/schedule',
+    까지: '/schedule',
     icon: '🗓️',
     title: 'D-day 시험일정 캘린더',
     description: '다가오는 시험 일정과 접수 마감일 관리',
@@ -41,7 +41,6 @@ function HomePage() {
   const [searchResults, setSearchResults] = useState([]); 
   const [isSearching, setIsSearching] = useState(false);  
 
-  // 🌐 Supabase 데이터베이스 다이렉트 검색 로직
   useEffect(() => {
     const trimmedQuery = query.trim();
     if (!trimmedQuery) {
@@ -52,8 +51,6 @@ function HomePage() {
     const delayDebounceFn = setTimeout(async () => {
       setIsSearching(true);
       try {
-        // 🛠️ [수정 완료] certificates 테이블에서 검색 쿼리 수행
-        // 'organization'을 'issuer'로 변경했습니다.
         const { data, error } = await supabase
           .from('certificates')
           .select('*')
