@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, 링크 } from 'react-router-dom';
 import { supabase } from './supabaseClient'; 
 
 function LoginPage() {
@@ -9,14 +9,14 @@ function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  // 🛡️ Supabase 표준 인증 처리 함수
+
   const handleLogin = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     setErrorMessage('');
 
     try {
-      // 🚀 Supabase Auth를 통한 로그인
+
       const { data, error } = await supabase.auth.signInWithPassword({
         email: email.trim(),
         password: password,
@@ -24,15 +24,13 @@ function LoginPage() {
 
       if (error) throw error;
 
-      // 🟢 로그인 성공 시 자동으로 세션이 저장됨 (localStorage 관리 필요 없음)
       console.log('로그인 성공:', data.user);
       
-      // 메인 페이지로 이동
       navigate('/');
       
     } catch (error) {
       console.error('로그인 에러:', error.message);
-      // 사용자에게 보여줄 메시지 (상황에 따라 한글화)
+
       if (error.message === 'Invalid login credentials') {
         setErrorMessage('이메일 또는 비밀번호가 올바르지 않습니다.');
       } else {
