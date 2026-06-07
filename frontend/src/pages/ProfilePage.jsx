@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from './supabaseClient'; // 💡 Supabase 클라이언트 import
+import { 링크, useNavigate } from 'react-router-dom';
+import { supabase } from './supabaseClient';
 import './ProfilePage.css';
 
 function ProfilePage() {
@@ -27,7 +27,6 @@ function ProfilePage() {
       setName(user.user_metadata?.name || '사용자');
       setEmail(user.email);
 
-      // 1. 찜한 목록 (null 체크 추가)
       const { data: bookmarkData, error: bError } = await supabase
         .from('bookmarks')
         .select('id, certificates(*)')
@@ -35,10 +34,8 @@ function ProfilePage() {
       
       if (bError) throw bError;
       
-      // 💡 데이터가 없어도 에러나지 않게 (bookmarkData || []) 추가
       setBookmarks((bookmarkData || []).map(b => ({ ...b.certificates, id: b.id })));
 
-      // 2. AI 추천 기록 (null 체크 추가)
       const { data: historyData, error: hError } = await supabase
         .from('ai_histories')
         .select('*')
@@ -46,8 +43,7 @@ function ProfilePage() {
         .order('created_at', { ascending: false });
 
       if (hError) throw hError;
-      
-      // 💡 데이터가 없어도 에러나지 않게 (historyData || []) 추가
+
       setHistories(historyData || []);
 
     } catch (error) {
@@ -59,7 +55,6 @@ function ProfilePage() {
   fetchProfileData();
 }, [navigate]);
 
-  // 2. 회원정보 변경 (Supabase Auth 업데이트)
   async function save(event) {
     event.preventDefault();
     setMessage('');
@@ -75,7 +70,6 @@ function ProfilePage() {
     }
   }
 
-  // 3. 찜 삭제 (Supabase Delete)
   async function handleRemoveBookmark(bookmarkId) {
     try {
       const { error } = await supabase
@@ -99,12 +93,8 @@ function ProfilePage() {
   }
 
   return (
-    // ... 기존 return JSX는 그대로 유지하셔도 됩니다! ...
     <div className="page-stack">
-      {/* ... 위에서 작성하신 JSX 코드 ... */}
       <div className="profile-page">
-        {/* ... 생략 ... */}
-        {/* 기존과 동일한 UI 사용 */}
       </div>
     </div>
   );
