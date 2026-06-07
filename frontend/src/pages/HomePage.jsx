@@ -1,6 +1,12 @@
-import { useMemo, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { categoryMeta, certifications } from '../data/certifications';
+import { supabase } from './supabaseClient'; 
+
+const categoryMeta = {
+  corporate: { title: '대기업 취업', icon: '🏢' },
+  public: { title: '공기업/공사', icon: '🏛️' },
+  government: { title: '공무원/공직', icon: '🎖️' },
+};
 
 const categoryCards = [
   { key: 'corporate', subtitle: '삼성, LG, 현대 등', tone: 'blue' },
@@ -13,7 +19,7 @@ const featureCards = [
     to: '/ranking',
     icon: '📈',
     title: '검색 순위 랭킹',
-    description: '가장 많이 검색된 인기 자격증 TOP 100',
+    description: '가장 많이 검색된 인기 자격증 TOP 10',
   },
   {
     to: '/recommendation',
@@ -32,53 +38,93 @@ const featureCards = [
 function HomePage() {
   const navigate = useNavigate();
   const [query, setQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]); 
+  const [isSearching, setIsSearching] = useState(false);  
 
-  const searchResults = useMemo(() => {
-    const normalized = query.trim().toLowerCase();
-    if (!normalized) return [];
+  // 🌐 Supabase 데이터베이스 다이렉트 검색 로직
+  useEffect(() => {
+    const trimmedQuery = query.trim();
+    if (!trimmedQuery) {
+      setSearchResults([]);
+      return;
+    }
 
-    return certifications.filter((item) =>
-      [item.name, item.field, item.organization, ...item.keywords].join(' ').toLowerCase().includes(normalized),
-    );
+    const delayDebounceFn = setTimeout(async () => {
+      setIsSearching(true);
+      try {
+        // 🛠️ [수정 완료] certificates 테이블에서 검색 쿼리 수행
+        // 'organization'을 'issuer'로 변경했습니다.
+        const { data, error } = await supabase
+          .from('certificates')
+          .select('*')
+          .or(`name.ilike.%${trimmedQuery}%,field.ilike.%${trimmedQuery}%,issuer.ilike.%${trimmedQuery}%`);
+        
+        if (error) {
+          throw error;
+        }
+        
+        setSearchResults(data || []); 
+      } catch (error) {
+        console.error('Supabase 실시간 검색 실패:', error.message);
+      } finally {
+        setIsSearching(false);
+      }
+    }, 300); 
+
+    return () => clearTimeout(delayDebounceFn);
   }, [query]);
 
   return (
-    <div className="page-stack">
+    <div className="page-stack home-page">
       <section className="home-hero">
-        <span className="hero-badge">스펙모아</span>
-        <h1>취업과 커리어를 위한 맞춤형 자격증 추천</h1>
-        <p>
+        <span className="home-badge">SPEC MOA</span>
+        <h1 className="home-title">취업과 커리어를 위한 맞춤형 자격증 추천 </h1>
+        <p className="home-subtitle">
           복잡한 자격증 정보를 한눈에 보고, 구직자의 목표에 어울리는 직무 맞춤형 커리어 가이드를
           제공합니다.
         </p>
 
-        <div className="home-search">
-          <label className="search-field search-field--hero">
-            <span className="search-field__icon">⌕</span>
-            <input
-              type="text"
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="자격증 이름, 직무, 키워드로 검색해보세요..."
-            />
-          </label>
+        <div 
+          className="search-bar" 
+          style={{ 
+            width: '100%', 
+            maxWidth: '850px', 
+            margin: '0 auto 30px', 
+            position: 'relative' 
+          }}
+        >
+          <input
+            type="search"
+            className="search-bar__input"
+            style={{ 
+              width: '100%',
+              textAlign: 'center', 
+              padding: '16px 24px'  
+            }}
+            placeholder="관심 자격증, 직무 분야를 입력하세요"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+          />
 
-          {query && (
-            <div className="search-results home-search-results">
-              {searchResults.length > 0 ? (
-                searchResults.slice(0, 5).map((item) => (
+          {/* 실시간 팝업 검색 결과 리스트 */}
+          {query.trim() && (
+            <div className="search-results" style={{ width: '100%', textAlign: 'left' }}>
+              {isSearching ? (
+                <div className="search-results__empty">🔍 데이터베이스 조회 중...</div>
+              ) : searchResults.length > 0 ? (
+                searchResults.map((item) => (
                   <button
                     key={item.id}
                     type="button"
                     className="search-results__item"
-                    onClick={() => navigate(`/certifications/${item.id}`)}
+                    onClick={() => navigate(`/certificate/${item.id}`)}
                   >
                     <strong>{item.name}</strong>
-                    <span>{item.field} · {item.organization}</span>
+                    <span>{item.field} · {item.issuer}</span>
                   </button>
                 ))
               ) : (
-                <div className="search-results__empty">검색 결과가 없습니다.</div>
+                <div className="search-results__empty">일치하는 자격증이 없습니다.</div>
               )}
             </div>
           )}
