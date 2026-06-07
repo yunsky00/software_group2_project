@@ -1,13 +1,23 @@
-const AUTH_KEY = 'specmoa-auth';
+import { supabase } from '../pages/supabaseClient'; // 경로 확인 필요
 
-export function isAuthenticated() {
-  return localStorage.getItem(AUTH_KEY) === 'true';
+// 1. 세션 확인 (비동기)
+export async function isAuthenticated() {
+  const { data } = await supabase.auth.getSession();
+  return !!data.session; // 세션이 있으면 true, 없으면 false
 }
 
-export function login() {
-  localStorage.setItem(AUTH_KEY, 'true');
+// 2. 로그인 (이메일/비밀번호 방식)
+export async function login(email, password) {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+  if (error) throw error;
+  return data;
 }
 
-export function logout() {
-  localStorage.removeItem(AUTH_KEY);
+// 3. 로그아웃
+export async function logout() {
+  const { error } = await supabase.auth.signOut();
+  if (error) throw error;
 }
