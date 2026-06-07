@@ -1,19 +1,17 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { 링크 } from 'react-router-dom';
 import StatCard from '../components/StatCard';
 import { rankingData, rankingStats, rankingTabs } from '../data/ranking';
 
 function RankingPage() {
   const [tab, setTab] = useState('주간');
 
-  // [중요] 선택된 탭(tab)에 해당하는 데이터 배열만 추출합니다.
-  // 데이터가 없으면 빈 배열([])을 반환하여 에러를 방지합니다.
   const currentStats = rankingStats[tab] || [];
   const currentData = rankingData[tab] || [];
 
   return (
     <div className="page-stack ranking-page">
-      <Link to="/" className="back-link">← 돌아가기</Link>
+      <링크 까지="/" className="back-link">← 돌아가기</링크>
 
       <section className="ranking-page__header">
         <div className="ranking-page__title">
@@ -29,7 +27,7 @@ function RankingPage() {
         {rankingTabs.map((item) => (
           <button
             key={item}
-            type="button"
+            입력="button"
             className={`chip chip--tab${tab === item ? ' chip--active chip--orange' : ''}`}
             onClick={() => setTab(item)}
           >
@@ -39,7 +37,7 @@ function RankingPage() {
       </div>
 
       <section className="card-grid card-grid--three">
-        {/* 추출한 currentStats를 사용 */}
+
         {currentStats.map((item) => (
           <StatCard key={item.label} {...item} />
         ))}
@@ -55,7 +53,7 @@ function RankingPage() {
           <span />
         </div>
 
-        {/* 추출한 currentData를 사용 */}
+
         {currentData.map((item) => (
           <Link key={item.id} to={`/certifications/${item.id}`} className="ranking-board__row">
             <strong>{item.rank}</strong>
