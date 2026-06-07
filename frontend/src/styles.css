@@ -584,6 +584,14 @@ textarea:focus {
   padding: 36px 32px;
 }
 
+.detail-summary-card__top {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
 .detail-summary-card__badge {
   display: inline-flex;
   min-height: 40px;
@@ -593,6 +601,37 @@ textarea:focus {
   background: #e8efff;
   color: #3769df;
   font-weight: 700;
+}
+
+.bookmark-button {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid #d7deeb;
+  background: #fff;
+  color: #49546a;
+  font-weight: 700;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, color 0.18s ease;
+}
+
+.bookmark-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(74, 90, 126, 0.08);
+  border-color: #aebbe0;
+}
+
+.bookmark-button--active {
+  background: #fff5cb;
+  border-color: #f0d36d;
+  color: #8a6200;
+}
+
+.bookmark-button__star {
+  font-size: 18px;
+  line-height: 1;
 }
 
 .detail-summary-card__level {
@@ -1481,9 +1520,9 @@ textarea:focus {
   .category-page__header,
   .ranking-page__header,
   .detail-action-row {
-    flex-direction: column;
-    align-items: start;
-  }
+      flex-direction: column;
+      align-items: start;
+    }
 
   .rating-row {
     flex-wrap: wrap;
@@ -1515,7 +1554,12 @@ textarea:focus {
   .category-page__title h1,
   .ranking-page__title h1,
   .detail-summary-card h1 {
-    font-size: 40px;
+      font-size: 40px;
+    }
+
+  .detail-summary-card__top {
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   .site-nav {

@@ -1,10 +1,19 @@
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import ReviewSection from '../components/ReviewSection';
 import { getCertificateById } from '../data/certifications';
+import { isBookmarked, toggleBookmark } from '../utils/userData';
 
 function CertificateDetailPage() {
   const { id } = useParams();
   const item = getCertificateById(id);
+  const [bookmarked, setBookmarked] = useState(false);
+
+  useEffect(() => {
+    if (item) {
+      setBookmarked(isBookmarked(item.id));
+    }
+  }, [item]);
 
   if (!item) {
     return (
@@ -20,7 +29,17 @@ function CertificateDetailPage() {
       <Link to={`/category/${item.category}`} className="back-link">← 돌아가기</Link>
 
       <section className="detail-summary-card">
-        <span className="detail-summary-card__badge">자격증 정보</span>
+        <div className="detail-summary-card__top">
+          <span className="detail-summary-card__badge">자격증 정보</span>
+          <button
+            type="button"
+            className={`bookmark-button${bookmarked ? ' bookmark-button--active' : ''}`}
+            onClick={() => setBookmarked(toggleBookmark(item))}
+          >
+            <span className="bookmark-button__star">{bookmarked ? '★' : '☆'}</span>
+            <span>{bookmarked ? '찜 완료' : '찜하기'}</span>
+          </button>
+        </div>
         <h1>{item.name}</h1>
         <span className="detail-summary-card__level">{item.level}</span>
         <p className="detail-summary-card__org">{item.organization}</p>

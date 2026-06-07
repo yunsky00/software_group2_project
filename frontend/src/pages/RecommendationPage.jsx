@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { certifications } from '../data/certifications';
+import { saveRecommendationHistory } from '../utils/userData';
 
 const careerOptions = ['대기업', '공기업', '공무원'];
 const experienceOptions = ['신입', '1-3년', '4-7년', '8년 이상'];
@@ -44,6 +45,23 @@ function RecommendationPage() {
       .sort((a, b) => b.score - a.score)
       .slice(0, 3);
   }, [career, experience, goal, interests, major]);
+
+  const handleSubmit = () => {
+    setSubmitted(true);
+    saveRecommendationHistory({
+      career,
+      major: major.trim(),
+      experience,
+      goal: goal.trim(),
+      interests,
+      recommendations: recommendations.map((item) => ({
+        id: item.id,
+        name: item.name,
+        field: item.field,
+        preparationPeriod: item.preparationPeriod,
+      })),
+    });
+  };
 
   return (
     <div className="page-stack recommendation-page">
@@ -126,7 +144,7 @@ function RecommendationPage() {
         </div>
 
         <div className="recommendation-cta">
-          <button type="button" className="recommendation-cta__button" onClick={() => setSubmitted(true)}>
+          <button type="button" className="recommendation-cta__button" onClick={handleSubmit}>
             ✨ AI 추천 받기
           </button>
         </div>

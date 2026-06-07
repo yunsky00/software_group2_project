@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import logoImage from '../assets/specmoa-logo.png';
 import { logout } from '../utils/auth';
+import { getProfile } from '../utils/userData';
 
 const navItems = [
   { to: '/', label: '홈' },
@@ -10,10 +11,13 @@ const navItems = [
 
 function Header() {
   const [open, setOpen] = useState(false);
+  const [profileName, setProfileName] = useState('김');
   const navigate = useNavigate();
   const ref = useRef(null);
 
   useEffect(() => {
+    setProfileName(getProfile().name || '김');
+
     function onDoc(event) {
       if (ref.current && !ref.current.contains(event.target)) {
         setOpen(false);
@@ -69,7 +73,7 @@ function Header() {
             aria-expanded={open}
             onClick={() => setOpen((value) => !value)}
           >
-            김
+            {profileName}
           </button>
 
           {open ? (
@@ -84,7 +88,7 @@ function Header() {
                 }}
               >
                 <UserIcon />
-                <span>개인정보 수정</span>
+                <span>마이페이지</span>
               </button>
 
               <button type="button" className="profile-menu__item" role="menuitem" onClick={handleLogout}>

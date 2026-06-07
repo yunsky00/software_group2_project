@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import CalendarView from '../components/CalendarView';
 import { buildCalendarEvents, scheduleData } from '../data/schedule';
+import { getBookmarks } from '../utils/userData';
 
 function getDDay(dateString) {
   const today = new Date('2025-06-07T00:00:00');
@@ -17,8 +18,14 @@ function formatDateLabel(dateString) {
 function SchedulePage() {
   const [currentMonth, setCurrentMonth] = useState(new Date('2025-06-01T00:00:00'));
   const [selectedDate, setSelectedDate] = useState('2025-06-14');
+  const bookmarkedIds = useMemo(() => getBookmarks().map((item) => item.id), []);
 
-  const events = useMemo(() => buildCalendarEvents(scheduleData), []);
+  const filteredScheduleData = useMemo(() => {
+    if (bookmarkedIds.length === 0) return [];
+    return scheduleData.filter((item) => bookmarkedIds.includes(item.certificationId));
+  }, [bookmarkedIds]);
+
+  const events = useMemo(() => buildCalendarEvents(filteredScheduleData), [filteredScheduleData]);
   const eventsByDate = useMemo(() => {
     const map = new Map();
     events.forEach((event) => {
@@ -32,10 +39,10 @@ function SchedulePage() {
   const selectedEvents = eventsByDate.get(selectedDate) || [];
   const scheduleCards = useMemo(
     () =>
-      scheduleData
+      filteredScheduleData
         .filter((item) => item.examDate.slice(0, 7) === `${currentMonth.getFullYear()}-${String(currentMonth.getMonth() + 1).padStart(2, '0')}`)
         .sort((a, b) => new Date(a.examDate) - new Date(b.examDate)),
-    [currentMonth],
+    [currentMonth, filteredScheduleData],
   );
 
   return (
@@ -74,7 +81,9 @@ function SchedulePage() {
           <div className="schedule-selected-events">
             <h2>{selectedDate} 일정</h2>
             <div className="schedule-selected-events__list">
-              {selectedEvents.length > 0 ? (
+              {bookmarkedIds.length === 0 ? (
+                <p>찜한 자격증이 없어 캘린더에 표시할 일정이 없습니다.</p>
+              ) : selectedEvents.length > 0 ? (
                 selectedEvents.map((event, index) => (
                   <div key={`${event.name}-${event.type}-${index}`} className="schedule-selected-events__item">
                     <span className={`schedule-mini-tag schedule-mini-tag--${event.type}`}>{event.label}</span>
@@ -90,45 +99,49 @@ function SchedulePage() {
       </section>
 
       <div className="schedule-card-list">
-        {scheduleCards.map((item) => (
-          <Link key={`${item.certificationId}-${item.examDate}`} to={`/certifications/${item.certificationId}`} className="schedule-detail-card">
-            <div className="schedule-detail-card__dday">
-              <div className="schedule-detail-card__dday-icon">D</div>
-              <strong>{getDDay(item.examDate)}</strong>
-            </div>
-
-            <div className="schedule-detail-card__content">
-              <div className="schedule-detail-card__header">
-                <div>
-                  <strong>{item.name}</strong>
-                  <span className={`schedule-pill schedule-pill--${item.status === '시험일' ? 'exam' : item.status === '접수 예정' ? 'period' : item.status === '접수중' ? 'period' : 'end'}`}>
-                    {item.status}
-                  </span>
-                </div>
-                <span className="schedule-detail-card__elapsed">{getDDay(item.examDate)}</span>
+        {bookmarkedIds.length === 0 ? (
+          <div className="profile-empty">마이페이지에서 자격증을 찜하면 해당 일정만 이곳에 표시됩니다.</div>
+        ) : (
+          scheduleCards.map((item) => (
+            <Link key={`${item.certificationId}-${item.examDate}`} to={`/certifications/${item.certificationId}`} className="schedule-detail-card">
+              <div className="schedule-detail-card__dday">
+                <div className="schedule-detail-card__dday-icon">D</div>
+                <strong>{getDDay(item.examDate)}</strong>
               </div>
 
-              <div className="schedule-detail-card__grid">
-                <div>
-                  <span>접수기간</span>
-                  <strong>{formatDateLabel(item.registrationStart)} ~ {formatDateLabel(item.registrationEnd)}</strong>
+              <div className="schedule-detail-card__content">
+                <div className="schedule-detail-card__header">
+                  <div>
+                    <strong>{item.name}</strong>
+                    <span className={`schedule-pill schedule-pill--${item.status === '시험일' ? 'exam' : item.status === '접수 예정' ? 'period' : item.status === '접수중' ? 'period' : 'end'}`}>
+                      {item.status}
+                    </span>
+                  </div>
+                  <span className="schedule-detail-card__elapsed">{getDDay(item.examDate)}</span>
                 </div>
-                <div>
-                  <span>시험일</span>
-                  <strong>{formatDateLabel(item.examDate)}</strong>
-                </div>
-                <div>
-                  <span>합격발표</span>
-                  <strong>{formatDateLabel(item.resultDate)}</strong>
-                </div>
-                <div>
-                  <span>응시료</span>
-                  <strong>{item.fee}</strong>
+
+                <div className="schedule-detail-card__grid">
+                  <div>
+                    <span>접수기간</span>
+                    <strong>{formatDateLabel(item.registrationStart)} ~ {formatDateLabel(item.registrationEnd)}</strong>
+                  </div>
+                  <div>
+                    <span>시험일</span>
+                    <strong>{formatDateLabel(item.examDate)}</strong>
+                  </div>
+                  <div>
+                    <span>합격발표</span>
+                    <strong>{formatDateLabel(item.resultDate)}</strong>
+                  </div>
+                  <div>
+                    <span>응시료</span>
+                    <strong>{item.fee}</strong>
+                  </div>
                 </div>
               </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          ))
+        )}
       </div>
     </div>
   );
