@@ -16,15 +16,15 @@ const dayLabels = ['일', '월', '화', '수', '목', '금', '토'];
 const eventBarStyle = {
   backgroundColor: '#d1e7ff',
   color: '#004a99',
-  padding: '1px 3px',        // 💡 여백을 더 줄여서 글자가 덜 꽉 차 보이게 합니다
+  padding: '1px 3px',        
   borderRadius: '3px',
-  fontSize: '10px',          // 💡 11px에서 10px로 살짝 줄입니다
-  fontWeight: '500',         // 💡 bold를 줄여서 가볍게 만듭니다
+  fontSize: '10px',         
+  fontWeight: '500',         
   marginBottom: '2px',
   display: 'block',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
-  textOverflow: 'ellipsis',   // 💡 글자가 넘치면 ...으로 표시
+  textOverflow: 'ellipsis',   
   textAlign: 'left'
 };
 
