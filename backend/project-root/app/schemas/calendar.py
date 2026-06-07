@@ -2,7 +2,7 @@
 캘린더/D-day 관련 데이터 검증 스키마 모듈.
 """
 from pydantic import BaseModel
-from datetime import datetime
+from datetime import date
 
 
 class DeadlineResponse(BaseModel):
@@ -11,8 +11,7 @@ class DeadlineResponse(BaseModel):
     """
     id: int
     name: str
-    receipt_end_date: datetime
+    receipt_end_date: date
     d_day: int
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}

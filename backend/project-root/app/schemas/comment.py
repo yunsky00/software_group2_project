@@ -1,8 +1,10 @@
 """
 댓글 관련 데이터 검증 스키마 모듈.
+DB 스키마: comment 테이블(단수), user_id integer.
 """
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional
 
 
 class CommentCreate(BaseModel):
@@ -18,9 +20,8 @@ class CommentResponse(BaseModel):
     """
     id: int
     content: str
-    created_at: datetime
-    user_id: int
-    cert_id: int
+    created_at: Optional[datetime] = None
+    user_id: Optional[int] = None  # integer FK
+    cert_id: Optional[int] = None
 
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
