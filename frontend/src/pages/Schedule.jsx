@@ -1,7 +1,7 @@
-// Schedule.jsx (수정된 전체 코드)
+
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { scheduleData } from '../data/schedule'; // 이 경로 확인하세요!
+import { scheduleData } from '../data/schedule';
 import './Schedule.css';
 
 function Schedule() {
