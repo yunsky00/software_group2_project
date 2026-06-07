@@ -1,4 +1,4 @@
-import { useState } from 'react'; // 🟢 검색어 관리를 위해 useState 추가
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Home.css';
 import corpIcon from '../assets/icons/icon-corporate.svg';
@@ -8,14 +8,13 @@ import rankIcon from '../assets/icons/icon-ranking.svg';
 import recIcon from '../assets/icons/icon-recommend.svg';
 import calIcon from '../assets/icons/icon-calendar.svg';
 
-function Home() {
+function 홈() {
   const navigate = useNavigate();
-  const [keyword, setKeyword] = useState(''); // 🟢 검색어 입력 상태
+  const [keyword, setKeyword] = useState(''); 
 
-  // 🟢 엔터키를 누르거나 검색 버튼을 눌렀을 때 실행될 함수
   const handleSearchSubmit = (event) => {
     if (event.key === 'Enter' && keyword.trim()) {
-      // 검색 결과 페이지로 검색어를 쿼리 스트링(?q=...)으로 들고 이동합니다.
+
       navigate(`/search?q=${encodeURIComponent(keyword.trim())}`);
     }
   };
@@ -80,7 +79,6 @@ function Home() {
         </p>
       </section>
 
-      {/* 검색 섹션 */}
       <section className="search-section">
         <div className="search-box">
           <span className="search-icon" aria-hidden="true">
@@ -105,7 +103,7 @@ function Home() {
               />
             </svg>
           </span>
-          {/* 🟢 value, onChange, onKeyDown 이벤트를 연결하여 작동하도록 수정 */}
+
           <input
             type="text"
             className="search-input"
